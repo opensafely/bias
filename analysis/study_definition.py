@@ -38,6 +38,21 @@ study = StudyDefinition(
 
     # define the study variables
 
+    # vaccination
+    covid_vax = patients.with_vaccination_record(
+        returning = "date",
+        tpp = {"target_disease_matches": "SARS-2 CORONAVIRUS",},
+        find_first_match_in_period = True,
+        on_or_before="index_date",
+        date_format = "YYYY-MM-DD",
+        return_expectations = {
+        "date": {
+            "earliest": "2020-12-08",
+            "latest": index_date,
+        }
+        },
+    ),    
+
     # DEMOGRAPHICS - sex, age, ethnicity
 
         ## sex 
@@ -217,6 +232,7 @@ study = StudyDefinition(
                     },
                 },
             },
+        ),
 
     # PRIMIS overall flag for shielded group
 
@@ -252,7 +268,7 @@ study = StudyDefinition(
     first_positive_test_date=patients.with_test_result_in_sgss(
             pathogen="SARS-CoV-2",
             test_result="positive",
-            on_or_after="2020-03-01",
+            on_or_before="index_date",
             find_first_match_in_period=True,
             returning="date",
             date_format="YYYY-MM-DD",
@@ -265,7 +281,7 @@ study = StudyDefinition(
     # LIFESTYLE VARIABLES
         # BMI
         bmi=patients.most_recent_bmi(
-                on_or_after="2010-03-01",
+                on_or_before="2010-03-01",
                 minimum_age_at_measurement=16,
                 include_measurement_date=True,
                 include_month=True,

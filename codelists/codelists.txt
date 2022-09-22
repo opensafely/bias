@@ -1,92 +1,62 @@
 # demographics
-    # ethnicity - primary and secondary care
-    opensafely/ethnicity/2020-04-27
-    opensafely/ethnicity-with-categories-snomed/5eb3345b/
+    # ethnicity
+    opensafely/ethnicity-snomed-0removed/2e641f61
     
 # Smoking - primary care only
-opensafely/smoking-clear/2020-04-29
+    opensafely/smoking-clear/2020-04-29
 
 # Cardiovascular risk factors - since they are in QOF, it's ok to use primary care only
 # blood pressure uses only one code for systolic and one for diastolic - see codelists.py
-opensafely/diabetes/2020-04-15
-opensafely/hypertension/2020-04-28
+    opensafely/diabetes/2020-04-15
+    opensafely/hypertension/2020-04-28
 
 # Respiratory
     # chronic resp disease excluding asthma:
     opensafely/current-copd/2020-05-06
-    opensafely/chronic-respiratory-disease/2020-04-10
     opensafely/other-respiratory-conditions/2020-07-21
     # asthma
     opensafely/asthma-diagnosis/2020-04-15
-    opensafely/asthma-inhaler-salbutamol-medication/2020-04-15
-    opensafely/asthma-inhaler-steroid-medication/2020-04-15
     opensafely/asthma-oral-prednisolone-medication/2020-04-27
 
 # Cancer
-opensafely/cancer-excluding-lung-and-haematological/2020-04-15
-opensafely/haematological-cancer/2020-04-15
-opensafely/lung-cancer/2020-04-15
+    opensafely/cancer-excluding-lung-and-haematological/2020-04-15
+    opensafely/haematological-cancer/2020-04-15
+    opensafely/lung-cancer/2020-04-15
 
 # immunosuppression
-opensafely/asplenia/2020-06-02
-opensafely/temporary-immunosuppression/2020-04-24
-opensafely/permanent-immunosuppression/2020-06-02
-opensafely/hiv/2020-07-13
+    opensafely/asplenia/2020-06-02
+    opensafely/temporary-immunosuppression/2020-04-24
+    opensafely/permanent-immunosuppression/2020-06-02
+    opensafely/hiv/2020-07-13
 
-# cardiovascular disease - primary and secondary care
-opensafely/atrial-fibrillation-clinical-finding/2020-07-09
-opensafely/peripheral-arterial-disease/50e915d7
-opensafely/heart-failure/2020-05-05
-opensafely/myocardial-infarction/2020-06-25
-opensafely/venous-thromboembolic-disease/2020-09-14
-opensafely/valvular-atrial-fibrillation/6cab4902
-opensafely/chronic-cardiac-disease/2020-04-08
-
-opensafely/venous-thromboembolism-icd-10/6e25de26
-opensafely/cardiovascular-secondary-care/20b63bd4
+# cardiovascular disease 
+    opensafely/atrial-fibrillation-clinical-finding/2020-07-09
+    opensafely/peripheral-arterial-disease/50e915d7
+    opensafely/heart-failure/2020-05-05
+    opensafely/myocardial-infarction/2020-06-25
+    opensafely/venous-thromboembolic-disease/2020-09-14
+    opensafely/chronic-cardiac-disease/2020-04-08
 
 # cerebrovascular disease incl dementia
-opensafely/stroke-updated/2020-06-02
-opensafely/transient-ischaemic-attack/3526e2ac
-opensafely/dementia-complete/48c76cf8
+    opensafely/stroke-updated/2020-06-02
+    opensafely/transient-ischaemic-attack/3526e2ac
+    opensafely/dementia-complete/48c76cf8
 
-opensafely/stroke-secondary-care/2020-10-05
-opensafely/transient-ischaemic-attack-secondary-care/1a77c1c6
+
+# Other required
+opensafely/chronic-liver-disease/2020-06-02
+opensafely/solid-organ-transplantation/2020-04-10
+opensafely/other-neurological-conditions/2020-06-02
+opensafely/rheumatoid-arthritis/2020-05-12
+opensafely/systemic-lupus-erythematosus-sle/2020-05-12
+opensafely/psoriasis/01091de1
 
 # KIDNEY DISEASE - FROM V
 user/viyaasan/dialysis/4c8d3f33
-user/viyaasan/dialysis-opcs-4/6b023254
-user/viyaasan/kidney-transplant/1a6e58c9
-user/viyaasan/kidney-transplant-opcs-4/18d788ae
-opensafely/dialysis/3ce108ac
-opensafely/kidney-transplant/2020-07-15
-
 # BASELINE EGFR - FROM BANG
 user/bangzheng/creatinine-value/7d319079
 
-# Other required
-opensafely/ra-sle-psoriasis/2020-04-14
-opensafely/chronic-liver-disease/2020-06-02
-opensafely/solid-organ-transplantation/2020-04-10
 
 
 
-#
-# needed or not?
-opensafely/aplastic-anaemia/2020-04-24
-opensafely/bone-marrow-transplant/2020-04-15
-opensafely/chronic-kidney-disease/2020-04-14
-opensafely/gi-bleed-or-ulcer/2020-04-08
-opensafely/inflammatory-bowel-disease/2020-04-07
-opensafely/other-neurological-conditions/2020-06-02
-opensafely/sickle-cell-disease/2020-04-14
-opensafely/covid-identification/2020-06-03
 
-
-# secondary care outcomes - ICD 10
-opensafely/diabetic-ketoacidosis-secondary-care/6e975569
-opensafely/venous-thromboembolic-disease-hospital/2020-10-01
-opensafely/asthma-exacerbation-secondary-care/229001a8
-opensafely/copd-exacerbation/6858db5b
-opensafely/copd-secondary-care/35734162
-opensafely/lower-respiratory-tract-infection-secondary-care/21c94e19

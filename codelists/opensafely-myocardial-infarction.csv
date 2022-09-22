@@ -1,0 +1,203 @@
+CTV3ID,CTV3PreferredTermDesc,CTV3Source
+14A3.,H/O: myocardial infarct at less than 60,CTV3Map_Code_And_Term
+14A3.,H/O: myocardial infarct at less than 60,QOF
+14A4.,H/O: myocardial infarct at greater than 60,CTV3Map_Code_And_Term
+14A4.,H/O: myocardial infarct at greater than 60,QOF
+323..,ECG: myocardial infarction,CTV3Map_Code_And_Term
+3232.,ECG: old myocardial infarction,CTV3Map_Code_And_Term
+3233.,ECG: anteroseptal infarction,CTV3Map_Code_And_Term
+3234.,ECG:posterior/inferior infarct,CTV3Map_Code_And_Term
+3235.,ECG: subendocardial infarct,CTV3Map_Code_And_Term
+3236.,ECG: lateral infarction,CTV3Map_Code_And_Term
+323Z.,ECG: myocardial infarct NOS,CTV3Map_Code_And_Term
+32B..,Q wave,CTV3Map_Code_And_Term
+32B2.,ECG: Q wave abnormal,CTV3Map_Code_And_Term
+32B3.,Pathological Q wave,CTV3Map_Code_And_Term
+32BZ.,ECG: Q wave NOS,CTV3Map_Code_And_Term
+79291,Percut transluminal coronary thrombolysis with streptokinase,CTV3Map_Code_And_Term
+79291,Percut transluminal coronary thrombolysis with streptokinase,CTV3Map_Code_Only
+G30..,(Myocard inf (& [ac][silent][card rupt])) or (coron thromb),QOF
+G300.,Acute anterolateral myocardial infarction,CTV3Map_Code_And_Term
+G300.,Acute anterolateral myocardial infarction,QOF
+G301.,Other specified anterior myocardial infarction,CTV3Map_Code_And_Term
+G301.,Other specified anterior myocardial infarction,QOF
+G3010,Acute anteroapical infarction,CTV3Map_Code_And_Term
+G3010,Acute anteroapical infarction,QOF
+G3011,Acute anteroseptal myocardial infarction,CTV3Map_Code_And_Term
+G3011,Acute anteroseptal myocardial infarction,QOF
+G301z,Anterior myocardial infarction NOS,CTV3Map_Code_And_Term
+G301z,Anterior myocardial infarction NOS,QOF
+G302.,Acute inferolateral myocardial infarction,CTV3Map_Code_And_Term
+G302.,Acute inferolateral myocardial infarction,QOF
+G303.,Acute inferoposterior infarction,CTV3Map_Code_And_Term
+G303.,Acute inferoposterior infarction,QOF
+G304.,Posterior myocardial infarction NOS,CTV3Map_Code_And_Term
+G304.,Posterior myocardial infarction NOS,QOF
+G305.,Lateral myocardial infarction NOS,CTV3Map_Code_And_Term
+G305.,Lateral myocardial infarction NOS,QOF
+G306.,True posterior myocardial infarction,CTV3Map_Code_And_Term
+G306.,True posterior myocardial infarction,QOF
+G307.,Acute subendocardial infarction,CTV3Map_Code_And_Term
+G307.,Acute subendocardial infarction,QOF
+G308.,Inferior myocardial infarction NOS,CTV3Map_Code_And_Term
+G308.,Inferior myocardial infarction NOS,QOF
+G30y.,Other acute myocardial infarction,CTV3Map_Code_And_Term
+G30y.,Other acute myocardial infarction,QOF
+G30y0,Acute atrial infarction,CTV3Map_Code_And_Term
+G30y0,Acute atrial infarction,QOF
+G30y1,Acute papillary muscle infarction,CTV3Map_Code_And_Term
+G30y1,Acute papillary muscle infarction,QOF
+G30y2,Acute septal infarction,CTV3Map_Code_And_Term
+G30y2,Acute septal infarction,QOF
+G30yz,Other acute myocardial infarction NOS,CTV3Map_Code_And_Term
+G30yz,Other acute myocardial infarction NOS,QOF
+G30z.,Acute myocardial infarction NOS,CTV3Map_Code_And_Term
+G30z.,Acute myocardial infarction NOS,QOF
+G310.,Post-myocardial infarction syndrome,CTV3Map_Code_And_Term
+G310.,Post-myocardial infarction syndrome,CTV3Map_Code_Only
+G310.,Post-myocardial infarction syndrome,QOF
+G311.,(Angina:[cresc][unstabl][at rest])(preinfar syn)(imp infarc),QOF
+G3110,Aborted myocardial infarction,QOF
+G31y1,Microinfarction of heart,CTV3Map_Code_And_Term
+G31y1,Microinfarction of heart,QOF
+G32..,Myocard infarct: [old] or [healed] or [personal history of],QOF
+G35..,Subsequent myocardial infarction,CTV3Map_Code_And_Term
+G35..,Subsequent myocardial infarction,QOF
+G350.,Subsequent myocardial infarction of anterior wall,CTV3Map_Code_And_Term
+G350.,Subsequent myocardial infarction of anterior wall,QOF
+G351.,Subsequent myocardial infarction of inferior wall,CTV3Map_Code_And_Term
+G351.,Subsequent myocardial infarction of inferior wall,QOF
+G353.,Subsequent myocardial infarction of other sites,CTV3Map_Code_And_Term
+G353.,Subsequent myocardial infarction of other sites,QOF
+G36..,Certain current complication follow acute myocardial infarct,CTV3Map_Code_And_Term
+G36..,Certain current complication follow acute myocardial infarct,QOF
+G360.,Haemopericardium/current comp folow acut myocard infarct,CTV3Map_Code_And_Term
+G360.,Haemopericardium/current comp folow acut myocard infarct,QOF
+G361.,Atrial septal defect/curr comp folow acut myocardal infarct,CTV3Map_Code_And_Term
+G361.,Atrial septal defect/curr comp folow acut myocardal infarct,QOF
+G363.,Ruptur cardiac wall w'out haemopericard/cur comp fol ac MI,CTV3Map_Code_And_Term
+G363.,Ruptur cardiac wall w'out haemopericard/cur comp fol ac MI,QOF
+G364.,Ruptur chordae tendinae/curr comp fol acute myocard infarct,CTV3Map_Code_And_Term
+G364.,Ruptur chordae tendinae/curr comp fol acute myocard infarct,QOF
+G365.,Rupture papillary muscle/curr comp fol acute myocard infarct,CTV3Map_Code_And_Term
+G365.,Rupture papillary muscle/curr comp fol acute myocard infarct,QOF
+G366.,"Thrombosis atrium,auric append&vent/curr comp foll acute MI",CTV3Map_Code_And_Term
+G366.,"Thrombosis atrium,auric append&vent/curr comp foll acute MI",QOF
+Gyu31,[X]Other current complicatns following acute myocard infarct,QOF
+Gyu34,[X]Acute transmural myocardial infarction of unspecif site,CTV3Map_Code_And_Term
+Gyu34,[X]Acute transmural myocardial infarction of unspecif site,QOF
+Gyu35,[X]Subsequent myocardial infarction of other sites,CTV3_Children
+Gyu35,[X]Subsequent myocardial infarction of other sites,QOF
+Gyu36,[X]Subsequent myocardial infarction of unspecified site,CTV3Map_Code_And_Term
+Gyu36,[X]Subsequent myocardial infarction of unspecified site,QOF
+X200D,Silent myocardial ischaemia,QOF
+X200E,Myocardial infarction,CTV3Map_Code_And_Term
+X200E,Myocardial infarction,CTV3Map_Code_Only
+X200E,Myocardial infarction,QOF
+X200G,Acute Q wave infarction - anteroseptal,CTV3_Children
+X200G,Acute Q wave infarction - anteroseptal,QOF
+X200H,Acute non-Q wave infarction - anteroseptal,CTV3_Children
+X200H,Acute non-Q wave infarction - anteroseptal,QOF
+X200I,Acute Q wave infarction - anterolateral,CTV3_Children
+X200I,Acute Q wave infarction - anterolateral,QOF
+X200J,Acute non-Q wave infarction - anterolateral,CTV3_Children
+X200J,Acute non-Q wave infarction - anterolateral,QOF
+X200K,Acute inferior myocardial infarction,CTV3_Children
+X200K,Acute inferior myocardial infarction,QOF
+X200L,Acute Q wave infarction - inferior,CTV3_Children
+X200L,Acute Q wave infarction - inferior,QOF
+X200M,Acute non-Q wave infarction - inferior,CTV3_Children
+X200M,Acute non-Q wave infarction - inferior,QOF
+X200N,Acute Q wave infarction - inferolateral,CTV3_Children
+X200N,Acute Q wave infarction - inferolateral,QOF
+X200O,Acute non-Q wave infarction - inferolateral,CTV3_Children
+X200O,Acute non-Q wave infarction - inferolateral,QOF
+X200P,Acute lateral myocardial infarction,CTV3_Children
+X200P,Acute lateral myocardial infarction,QOF
+X200Q,Acute Q wave infarction - lateral,CTV3_Children
+X200Q,Acute Q wave infarction - lateral,QOF
+X200R,Acute non-Q wave infarction - lateral,CTV3_Children
+X200R,Acute non-Q wave infarction - lateral,QOF
+X200S,Acute widespread myocardial infarction,CTV3_Children
+X200S,Acute widespread myocardial infarction,QOF
+X200T,Acute Q wave infarction - widespread,CTV3_Children
+X200T,Acute Q wave infarction - widespread,QOF
+X200U,Acute non-Q wave infarction - widespread,CTV3_Children
+X200U,Acute non-Q wave infarction - widespread,QOF
+X200V,Acute posterior myocardial infarction,CTV3_Children
+X200V,Acute posterior myocardial infarction,QOF
+X200W,Old anterior myocardial infarction,CTV3_Children
+X200W,Old anterior myocardial infarction,QOF
+X200X,Old inferior myocardial infarction,CTV3_Children
+X200X,Old inferior myocardial infarction,QOF
+X200Y,Old lateral myocardial infarction,CTV3_Children
+X200Y,Old lateral myocardial infarction,QOF
+X200Z,Old posterior myocardial infarction,CTV3_Children
+X200Z,Old posterior myocardial infarction,QOF
+X200a,Silent myocardial infarction,CTV3Map_Code_And_Term
+X200a,Silent myocardial infarction,CTV3Map_Code_Only
+X200a,Silent myocardial infarction,QOF
+X200d,Post-infarction ventricular septal defect,CTV3Map_Code_And_Term
+X200d,Post-infarction ventricular septal defect,QOF
+X200e,Cardiac rupture after acute myocardial infarction,CTV3Map_Code_And_Term
+X200e,Cardiac rupture after acute myocardial infarction,CTV3Map_Code_Only
+X200e,Cardiac rupture after acute myocardial infarction,QOF
+X200x,Post-infarction mitral papillary muscle rupture,High_Level_SNOMED
+X201u,Post-infarction pericarditis,High_Level_SNOMED
+X203v,Coronary artery thrombosis,CTV3Map_Code_And_Term
+X203v,Coronary artery thrombosis,CTV3Map_Code_Only
+X77Cr,Q wave height,CTV3_Children
+X77Cs,Q wave height increased,CTV3_Children
+X77Ct,Q wave height decreased,CTV3_Children
+X77DK,Q wave shape,CTV3_Children
+XE0Uh,Acute myocardial infarction,CTV3Map_Code_And_Term
+XE0Uh,Acute myocardial infarction,CTV3Map_Code_Only
+XE0Uh,Acute myocardial infarction,QOF
+XE0WA,Myocardial infarction (& [acute]) or coronary thrombosis,QOF
+XE2aA,Old myocardial infarction,CTV3Map_Code_And_Term
+XE2aA,Old myocardial infarction,CTV3Map_Code_Only
+XE2aA,Old myocardial infarction,QOF
+Xa0YL,Acute anterior myocardial infarction,CTV3_Children
+Xa0YL,Acute anterior myocardial infarction,QOF
+Xa1dP,Ischaemic myocardial dysfunction,QOF
+XaAC3,Acute Q wave myocardial infarction,CTV3Map_Code_And_Term
+XaAC3,Acute Q wave myocardial infarction,QOF
+XaAzi,Acute non-Q wave infarction,CTV3Map_Code_And_Term
+XaAzi,Acute non-Q wave infarction,QOF
+XaBL1,H/O: Myocardial infarction in last year,CTV3Map_Code_And_Term
+XaBL1,H/O: Myocardial infarction in last year,QOF
+XaD2b,Postoperative myocardial infarction,CTV3Map_Code_And_Term
+XaD2b,Postoperative myocardial infarction,QOF
+XaD2d,Postoperative transmural myocardial infarction anterior wall,CTV3Map_Code_And_Term
+XaD2d,Postoperative transmural myocardial infarction anterior wall,QOF
+XaD2e,Postoperative transmural myocardial infarction inferior wall,CTV3Map_Code_And_Term
+XaD2e,Postoperative transmural myocardial infarction inferior wall,QOF
+XaD2f,Postoperative transmural myocardial infarction other sites,CTV3_Children
+XaD2f,Postoperative transmural myocardial infarction other sites,QOF
+XaD2g,Postoperative transmural myocardial infarction unspec site,CTV3_Children
+XaD2g,Postoperative transmural myocardial infarction unspec site,QOF
+XaD2h,Postoperative subendocardial myocardial infarction,CTV3Map_Code_And_Term
+XaD2h,Postoperative subendocardial myocardial infarction,QOF
+XaD2i,"Postoperative myocardial infarction, unspecified",CTV3Map_Code_And_Term
+XaD2i,"Postoperative myocardial infarction, unspecified",QOF
+XaEXt,Post infarct angina,QOF
+XaEgZ,Non-Q wave myocardial infarction,CTV3_Children
+XaEgZ,Non-Q wave myocardial infarction,QOF
+XaFx7,Diab mellit insulin-glucose infus acute myocardial infarct,CTV3Map_Code_And_Term
+XaFx7,Diab mellit insulin-glucose infus acute myocardial infarct,QOF
+XaIf1,First myocardial infarction,CTV3_Children
+XaIf1,First myocardial infarction,QOF
+XaIwM,Acute ST segment elevation myocardial infarction,CTV3Map_Code_And_Term
+XaIwM,Acute ST segment elevation myocardial infarction,QOF
+XaIwY,Acute non-ST segment elevation myocardial infarction,CTV3Map_Code_And_Term
+XaIwY,Acute non-ST segment elevation myocardial infarction,QOF
+XaJIU,Coronary artery bypass graft occlusion,QOF
+XaJX0,Acute posterolateral myocardial infarction,CTV3Map_Code_And_Term
+XaJX0,Acute posterolateral myocardial infarction,QOF
+XaQk7,History of myocardial infarction,CTV3Map_Code_And_Term
+XaQk7,History of myocardial infarction,CTV3Map_Code_Only
+XaQk7,History of myocardial infarction,QOF
+XaRFL,Exception reporting: myocardial infarction quality indicator,QOF
+XaRFO,Exc myocard infarction quality indicators: informed dissent,QOF
+XaRFP,Exc myocar infarction quality indicators: patient unsuitable,QOF
+Y1eef,Mixed myocardial ischaemia and infarction,QOF
