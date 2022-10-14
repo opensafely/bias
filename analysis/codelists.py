@@ -4,16 +4,13 @@ from cohortextractor import (
     codelist,
 )
 
-# DEMOGRAPHIC CODELISTS
 ethnicity_codes = codelist_from_csv(
-"codelists/opensafely-ethnicity-snomed-0removed.csv",
+    "codelists/opensafely-ethnicity-snomed-0removed.csv",
     system="snomed",
     column="snomedcode",
-    category_column="Grouping_6",)
+    category_column="Grouping_6",
+    )
 
-
-# SHIELDING CODELISTS
-# High risk and not high risk codes, to define clinical vulnerability to complications from COVID-19 infection/shielding
 high_risk_codes = codelist(
     ['1300561000000107'], 
     system="snomed",
@@ -24,9 +21,13 @@ not_high_risk_codes = codelist(
     system="snomed",
     )
 
-# SMOKING
+clear_smoking_codes = codelist_from_csv(
+    "codelists/opensafely-smoking-clear.csv",
+    system="ctv3",
+    column="CTV3Code",
+    category_column="Category",
+)
 
-# BLOOD PRESSURE
 systolic_blood_pressure_codes = codelist(
     ["2469."], 
     system="ctv3",
@@ -37,9 +38,6 @@ diastolic_blood_pressure_codes = codelist(
     system="ctv3",
     )
 
-
-# COMORBIDITIES
-# diabetes hba1c codes
 hba1c_new_codes = codelist(
     ["XaPbt", "Xaeze", "Xaezd"], 
     system="ctv3",
@@ -50,59 +48,202 @@ hba1c_old_codes = codelist(
     system="ctv3",
     )
 
-    
-# Smoking - primary care only
-    opensafely/smoking-clear/2020-04-29
+diabetes_codes = codelist_from_csv(
+    "codelists/opensafely-diabetes.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
 
-# Cardiovascular risk factors - since they are in QOF, it's ok to use primary care only
-# blood pressure uses only one code for systolic and one for diastolic - see codelists.py
-    opensafely/diabetes/2020-04-15
-    opensafely/hypertension/2020-04-28
+hypertension_codes = codelist_from_csv(
+    "codelists/opensafely-hypertension.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
 
-# Respiratory
-    # chronic resp disease excluding asthma:
-    opensafely/current-copd/2020-05-06
-    opensafely/other-respiratory-conditions/2020-07-21
-    # asthma
-    opensafely/asthma-diagnosis/2020-04-15
-    opensafely/asthma-oral-prednisolone-medication/2020-04-27
+copd_codes = codelist_from_csv(    
+    "codelists/opensafely-current-copd.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
 
-# Cancer
-    opensafely/cancer-excluding-lung-and-haematological/2020-04-15
-    opensafely/haematological-cancer/2020-04-15
-    opensafely/lung-cancer/2020-04-15
+other_respiratory_codes = codelist_from_csv(
+    "codelists/opensafely-other-respiratory-conditions.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
 
-# immunosuppression
-    opensafely/asplenia/2020-06-02
-    opensafely/temporary-immunosuppression/2020-04-24
-    opensafely/permanent-immunosuppression/2020-06-02
-    opensafely/hiv/2020-07-13
+asthma_codes = codelist_from_csv(
+    "codelists/opensafely-asthma-diagnosis.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
 
-# cardiovascular disease - primary and secondary care
-    opensafely/atrial-fibrillation-clinical-finding/2020-07-09
-    opensafely/peripheral-arterial-disease/50e915d7
-    opensafely/heart-failure/2020-05-05
-    opensafely/myocardial-infarction/2020-06-25
-    opensafely/venous-thromboembolic-disease/2020-09-14
-    opensafely/chronic-cardiac-disease/2020-04-08
+chronic_respiratory_disease_codes = codelist_from_csv(
+    "codelists/opensafely-chronic-respiratory-disease.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
 
-# cerebrovascular disease incl dementia
-    opensafely/stroke-updated/2020-06-02
-    opensafely/transient-ischaemic-attack/3526e2ac
-    opensafely/dementia-complete/48c76cf8
+pred_codes = codelist_from_csv(
+    "codelists/opensafely-asthma-oral-prednisolone-medication.csv",
+    system="snomed",
+    column="snomed_id",
+    )
 
+lung_cancer_codes = codelist_from_csv( 
+    "codelists/opensafely-lung-cancer.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
 
-# Other required
-opensafely/chronic-liver-disease/2020-06-02
-opensafely/solid-organ-transplantation/2020-04-10
-opensafely/other-neurological-conditions/2020-06-02
-opensafely/rheumatoid-arthritis/2020-05-12
-opensafely/systemic-lupus-erythematosus-sle/2020-05-12
-opensafely/psoriasis/01091de1
+haem_cancer_codes = codelist_from_csv( 
+    "codelists/opensafely-haematological-cancer.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
 
-# KIDNEY DISEASE - FROM V
-user/viyaasan/dialysis/4c8d3f33
-# BASELINE EGFR - FROM BANG
-user/bangzheng/creatinine-value/7d319079
+other_cancer_codes = codelist_from_csv(
+    "codelists/opensafely-cancer-excluding-lung-and-haematological.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+hiv_codes = codelist_from_csv(
+    "codelists/opensafely-hiv.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+permanent_immune_codes = codelist_from_csv(
+    "codelists/opensafely-permanent-immunosuppression.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+sickle_cell_codes = codelist_from_csv(
+    "codelists/opensafely-sickle-cell-disease.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+spleen_codes = codelist_from_csv(
+    "codelists/opensafely-asplenia.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+temp_immune_codes = codelist_from_csv(
+    "codelists/opensafely-temporary-immunosuppression.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+organ_transplant_codes = codelist_from_csv(
+    "codelists/opensafely-solid-organ-transplantation.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+aplastic_codes = codelist_from_csv(
+    "codelists/opensafely-aplastic-anaemia.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+af_codes = codelist_from_csv(
+    "codelists/opensafely-atrial-fibrillation-clinical-finding.csv",
+    system="ctv3",
+    column="CTV3Code",
+    )
+
+pad_codes = codelist_from_csv(
+    "codelists/opensafely-peripheral-arterial-disease.csv",
+    system="ctv3",
+    column="code",
+    )
+
+heart_failure_codes = codelist_from_csv(
+    "codelists/opensafely-heart-failure.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+mi_codes = codelist_from_csv(
+    "codelists/opensafely-myocardial-infarction.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+vte_codes = codelist_from_csv(
+    "codelists/opensafely-venous-thromboembolic-disease.csv",
+    system="ctv3",
+    column="CTV3Code",
+    )
+
+chd_codes = codelist_from_csv(
+    "codelists/opensafely-chronic-cardiac-disease.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+stroke_codes = codelist_from_csv(
+    "codelists/opensafely-stroke-updated.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+tia_codes = codelist_from_csv(
+    "codelists/opensafely-transient-ischaemic-attack.csv",
+    system="ctv3",
+    column="code",
+    )
+
+dementia_codes = codelist_from_csv(
+    "codelists/opensafely-dementia-complete.csv",
+    system="ctv3",
+    column="code",
+    )
+
+liver_codes = codelist_from_csv(
+    "codelists/opensafely-chronic-liver-disease.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+other_neuro_codes = codelist_from_csv(
+    "codelists/opensafely-other-neurological-conditions.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+rheumatoid_arthritis_codes = codelist_from_csv(
+    "codelists/opensafely-rheumatoid-arthritis.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+sle_codes = codelist_from_csv(
+    "codelists/opensafely-systemic-lupus-erythematosus-sle.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+psoriasis_codes = codelist_from_csv(
+    "codelists/opensafely-psoriasis.csv",
+    system="ctv3",
+    column="code",
+    )
+
+dialysis_codes = codelist_from_csv(
+    "codelists/opensafely-dialysis.csv",
+    system="ctv3",
+    column="CTV3ID",
+    )
+
+creatinine_codes = codelist_from_csv(
+    "codelists/user-bangzheng-creatinine-value.csv",
+    system="snomed",
+    column="code",
+    )
 
 

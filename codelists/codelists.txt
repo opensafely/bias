@@ -1,19 +1,17 @@
 # demographics
-    # ethnicity
     opensafely/ethnicity-snomed-0removed/2e641f61
     
-# Smoking - primary care only
-    opensafely/smoking-clear/2020-04-29
-
 # Cardiovascular risk factors - since they are in QOF, it's ok to use primary care only
 # blood pressure uses only one code for systolic and one for diastolic - see codelists.py
     opensafely/diabetes/2020-04-15
     opensafely/hypertension/2020-04-28
+    opensafely/smoking-clear/2020-04-29
 
 # Respiratory
     # chronic resp disease excluding asthma:
     opensafely/current-copd/2020-05-06
     opensafely/other-respiratory-conditions/2020-07-21
+    opensafely/chronic-respiratory-disease/2020-04-10
     # asthma
     opensafely/asthma-diagnosis/2020-04-15
     opensafely/asthma-oral-prednisolone-medication/2020-04-27
@@ -28,6 +26,8 @@
     opensafely/temporary-immunosuppression/2020-04-24
     opensafely/permanent-immunosuppression/2020-06-02
     opensafely/hiv/2020-07-13
+    opensafely/sickle-cell-disease/2020-04-14
+    opensafely/aplastic-anaemia/2020-04-24
 
 # cardiovascular disease 
     opensafely/atrial-fibrillation-clinical-finding/2020-07-09
@@ -42,19 +42,17 @@
     opensafely/transient-ischaemic-attack/3526e2ac
     opensafely/dementia-complete/48c76cf8
 
-
 # Other required
-opensafely/chronic-liver-disease/2020-06-02
-opensafely/solid-organ-transplantation/2020-04-10
-opensafely/other-neurological-conditions/2020-06-02
-opensafely/rheumatoid-arthritis/2020-05-12
-opensafely/systemic-lupus-erythematosus-sle/2020-05-12
-opensafely/psoriasis/01091de1
+    opensafely/chronic-liver-disease/2020-06-02
+    opensafely/solid-organ-transplantation/2020-04-10
+    opensafely/other-neurological-conditions/2020-06-02
+    opensafely/rheumatoid-arthritis/2020-05-12
+    opensafely/systemic-lupus-erythematosus-sle/2020-05-12
+    opensafely/psoriasis/01091de1
 
-# KIDNEY DISEASE - FROM V
-user/viyaasan/dialysis/4c8d3f33
-# BASELINE EGFR - FROM BANG
-user/bangzheng/creatinine-value/7d319079
+# KIDNEY DISEASE 
+    opensafely/dialysis/3ce108ac
+    user/bangzheng/creatinine-value/7d319079
 
 
 

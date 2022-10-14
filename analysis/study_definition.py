@@ -6,6 +6,7 @@ from cohortextractor import (
     StudyDefinition, 
     patients, 
     codelist, 
+    filter_codes_by_category,
     codelist_from_csv  
 )
 
@@ -15,10 +16,10 @@ from codelists import *
 
 # Specify study definition
 study = StudyDefinition(
-    index_date="2020-09-01",
+    index_date="2022-09-01",
     default_expectations={
         "date": {"earliest": "1900-01-01", "latest": "today"},
-        "rate": "uniform",
+        "rate": "exponential_increase",
         "incidence": 0.5,
     },
 
@@ -37,18 +38,29 @@ study = StudyDefinition(
 
 
     # define the study variables
+    # in CIS or not
+    in_cis = patients.with_an_ons_cis_record(
+        returning="binary_flag",
+        date_filter_column="visit_date",
+        between=["index_date - 3 years", "index_date"],
+        return_expectations = {
+        "incidence": 0.01,
+        }
+
+    ),
+
 
     # vaccination
-    covid_vax = patients.with_vaccination_record(
+    covid_vax = patients.with_tpp_vaccination_record(
         returning = "date",
-        tpp = {"target_disease_matches": "SARS-2 CORONAVIRUS",},
+        target_disease_matches="SARS-2 CORONAVIRUS",
         find_first_match_in_period = True,
         on_or_before="index_date",
         date_format = "YYYY-MM-DD",
         return_expectations = {
         "date": {
             "earliest": "2020-12-08",
-            "latest": index_date,
+            "latest": "index_date",
         }
         },
     ),    
@@ -77,13 +89,15 @@ study = StudyDefinition(
             {   
                 "0": "DEFAULT",
                 "18-39": """ age >=  18 AND age < 40""",
-                "40-59": """ age >=  40 AND age < 60""",
-                "60-79": """ age >=  60 AND age < 80""",
+                "40-49": """ age >=  40 AND age < 50""",
+                "50-59": """ age >=  50 AND age < 60""",
+                "60-69": """ age >=  60 AND age < 70""",
+                "70-79": """ age >=  70 AND age < 80""",
                 "80+": """ age >=  80 AND age < 120""",
             },
             return_expectations={
                 "rate":"universal",
-                "category": {"ratios": {"18-39": 0.3, "40-59": 0.3, "60-79":0.2, "80+":0.2 }}
+                "category": {"ratios": {"18-39": 0.3, "40-49": 0.15, "50-59": 0.15, "60-69": 0.2, "70-79":0.1, "80+":0.1 }}
             },
         ),
         
@@ -111,7 +125,7 @@ study = StudyDefinition(
             ),
 
             eth=patients.with_these_clinical_events(
-                ethnicity_primis_snomed_codes,
+                ethnicity_codes,
                 returning="category",
                 find_last_match_in_period=True,
                 on_or_before="today",
@@ -127,21 +141,34 @@ study = StudyDefinition(
         # died
         died=patients.died_from_any_cause(
             on_or_before="index_date",
+            return_expectations = {
+            "incidence": 1.0,
+            }
+
         ),
 
         ## registered with TPP on index date
         is_registered_with_tpp=patients.registered_as_of(
             "index_date",
+            return_expectations = {
+            "incidence": 1.0,
+            }
         ),
 
         ## registered with TPP on date of household identification (1st Feb 2020)
         is_registered_with_tpp_feb2020=patients.registered_as_of(
             "2020-02-01",
+            return_expectations = {
+            "incidence": 1.0,
+            }
         ),
 
         ## registered with one practice for 90 days prior to index date        
         has_follow_up=patients.registered_with_one_practice_between(
             "index_date - 90 days", "index_date",
+            return_expectations = {
+            "incidence": 1.0,
+            }
         ),  
 
     # HOUSEHOLD INFORMATION
@@ -305,7 +332,8 @@ study = StudyDefinition(
                 "M": "DEFAULT",
             },
             return_expectations={
-                "category": {"ratios": {"S": 0.6, "E": 0.1, "N": 0.2, "M": 0.1}}
+                "incidence": 0.9,
+               "category": {"ratios": {"S": 0.6, "E": 0.1, "N": 0.2, "M": 0.1}}
             },
             most_recent_smoking_code=patients.with_these_clinical_events(
                 clear_smoking_codes,
@@ -323,7 +351,7 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
@@ -335,7 +363,7 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_first_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
@@ -372,7 +400,7 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_first_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
@@ -382,7 +410,7 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_first_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
         hba1c_mmol_per_mol=patients.with_these_clinical_events(
@@ -418,7 +446,7 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_first_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
@@ -428,7 +456,7 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_first_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
@@ -478,11 +506,20 @@ study = StudyDefinition(
         
         # CANCER - 3 TYPES
         cancer=patients.with_these_clinical_events(
-            combine_codelists(lung_cancer_codes, haem_cancer_codes, other_cancer_codes),
+            combine_codelists(lung_cancer_codes, other_cancer_codes),
             on_or_before="index_date",
             returning="date",
             find_first_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
+            return_expectations={"date": {"latest": "index_date"}},
+        ),
+
+        haem_cancer=patients.with_these_clinical_events(
+            haem_cancer_codes,
+            on_or_before="index_date",
+            returning="date",
+            find_first_match_in_period=True,
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
@@ -497,7 +534,7 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
@@ -506,7 +543,7 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
@@ -515,16 +552,16 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
         aplastic_anaemia=patients.with_these_clinical_events(
             aplastic_codes,
-            between=["index date - 365 days", "index_date"],
+            between=["index_date - 365 days", "index_date"],
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={
                 "date": {"earliest": "2019-03-01", "latest": "index_date"}
             },
@@ -535,7 +572,7 @@ study = StudyDefinition(
             between=["2019-03-01", "index_date"],
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={
                 "date": {"earliest": "2019-03-01", "latest": "index_date"}
             },
@@ -548,7 +585,7 @@ study = StudyDefinition(
                 on_or_before="index_date",
                 returning="date",
                 find_first_match_in_period=True,
-                date_format="YYYY-MM",
+                date_format="YYYY-MM-DD",
                 return_expectations={"date": {"latest": "index_date"}},
             ),
 
@@ -558,7 +595,7 @@ study = StudyDefinition(
                 on_or_before="index_date",
                 returning="date",
                 find_last_match_in_period=True,
-                date_format="YYYY-MM",
+                date_format="YYYY-MM-DD",
                 return_expectations={"date": {"latest": "index_date"}},
             ),
             # Transient ischaemic attack
@@ -567,7 +604,7 @@ study = StudyDefinition(
                 on_or_before="index_date",
                 returning="date",
                 find_last_match_in_period=True,
-                date_format="YYYY-MM",
+                date_format="YYYY-MM-DD",
                 return_expectations={"date": {"latest": "index_date"}},
             ),
             # Myocardial infarction
@@ -576,7 +613,7 @@ study = StudyDefinition(
                 on_or_before="index_date",
                 returning="date",
                 find_last_match_in_period=True,
-                date_format="YYYY-MM",
+                date_format="YYYY-MM-DD",
                 return_expectations={"date": {"latest": "index_date"}},
             ),
             # Chronic heart disease
@@ -585,7 +622,7 @@ study = StudyDefinition(
                 on_or_before="index_date",
                 returning="date",
                 find_last_match_in_period=True,
-                date_format="YYYY-MM",
+                date_format="YYYY-MM-DD",
                 return_expectations={"date": {"latest": "index_date"}},
             ),
             # Peripheral artery disease
@@ -594,7 +631,7 @@ study = StudyDefinition(
                 on_or_before="index_date",
                 returning="date",
                 find_last_match_in_period=True,
-                date_format="YYYY-MM",
+                date_format="YYYY-MM-DD",
                 return_expectations={"date": {"latest": "index_date"}},
             ),
             # Venous thromboembolism
@@ -603,7 +640,7 @@ study = StudyDefinition(
                 on_or_before="index_date",
                 returning="date",
                 find_last_match_in_period=True,
-                date_format="YYYY-MM",
+                date_format="YYYY-MM-DD",
                 return_expectations={"date": {"latest": "index_date"}},
             ),
 
@@ -613,17 +650,17 @@ study = StudyDefinition(
                 on_or_before="index_date",
                 returning="date",
                 find_last_match_in_period=True,
-                date_format="YYYY-MM",
+                date_format="YYYY-MM-DD",
                 return_expectations={"date": {"latest": "index_date"}},
             ),
 
         # Lupus
         systemic_lupus_erythematosus=patients.with_these_clinical_events(
-            systemic_lupus_erythematosus_codes,
+            sle_codes,
             on_or_before="index_date",
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
         
@@ -633,25 +670,27 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
         # psoriasis
+        psoriasis=patients.with_these_clinical_events(
+            psoriasis_codes,
             on_or_before="index_date",
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
         # liver disease
         chronic_liver_disease=patients.with_these_clinical_events(
-            chronic_liver_disease_codes,
+            liver_codes,
             on_or_before="index_date",
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
@@ -661,7 +700,7 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 
@@ -693,7 +732,7 @@ study = StudyDefinition(
             on_or_before="index_date",
             returning="date",
             find_last_match_in_period=True,
-            date_format="YYYY-MM",
+            date_format="YYYY-MM-DD",
             return_expectations={"date": {"latest": "index_date"}},
         ),
 

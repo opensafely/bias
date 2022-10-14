@@ -1,7 +1,7 @@
 version: '3.0'
 
 expectations:
-  population_size: 1000
+  population_size: 100000
 
 actions:
 
@@ -10,3 +10,19 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input.csv
+
+  # Generate objective 1a dataset
+  create_dataset_1a:
+    run: stata-mp:latest analysis/cr_dataset_1a.do
+    needs: [generate_study_population]
+    outputs:
+      highly_sensitive:
+        output: output/cr_dataset_1a.csv
+
+  # Generate objective 1a table
+  create_table_1a:
+    run: stata-mp:latest analysis/tabulate_1a.do
+    needs: [generate_study_population, create_dataset_1a]
+    outputs:
+      moderately_sensitive:
+        output: output/tables/an_table_PublicationDescriptivesTable_1a.csv      
