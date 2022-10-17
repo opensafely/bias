@@ -59,7 +59,12 @@ import delimited "$outdir/input"
 noi di "CONVERT DATES TO STATA DATES" 
 sum
 
-foreach var of varlist covid_vax - dialysis {
+foreach var of varlist covid_vax first_positive_test_date bmi_date_measured smoking_status_date ///
+hypertension bp_sys_date_measured bp_dias_date_measured dementia diabetes hba1c_mmol_per_mol_date ///
+hba1c_percentage_date copd other_respiratory cancer haem_cancer permanent_immunodeficiency transplant ///
+asplenia aplastic_anaemia temporary_immunodeficiency heart_failure stroke tia myocardial_infarct ///
+heart_disease pad vte af systemic_lupus_erythematosus rheumatoid_arthritis psoriasis ///
+chronic_liver_disease other_neuro creatinine_date dialysis {
 	gen year = substr(`var',1,4)
 	gen month=substr(`var',6,2)
 	gen day=substr(`var',9,2)
