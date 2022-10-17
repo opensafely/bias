@@ -57,6 +57,7 @@ import delimited "$outdir/input"
 ******************************
 
 noi di "CONVERT DATES TO STATA DATES" 
+sum
 
 foreach var of varlist covid_vax - dialysis {
 	gen year = substr(`var',1,4)
