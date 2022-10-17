@@ -192,7 +192,7 @@ cou if bmi==.
 local bmimissing=r(N)
 cou if smok_status==.
 local smokmissing=r(N)
-file write tablecontent _n ("*missing BMI included in 'not obese' (n = ") (`bmimissing') (" (") %3.1f (100*`bmimissing'/`denom') ("%); missing smoking included in 'never smoker' (n = ") (`smokmissing') (" (") %3.1f (100*`smokmissing'/`denom') ("%))") 
+file write tablecontent _n ("*missing could be included in 'not obese' (n = ") (`bmimissing') (" (") %3.1f (100*`bmimissing'/`denom') ("%); missing smoking could be included in 'never smoker' (n = ") (`smokmissing') (" (") %3.1f (100*`smokmissing'/`denom') ("%))") 
 */
 
 file close tablecontent

@@ -150,7 +150,7 @@ noi di "For each date variable indicating a comorbidity, define whether morbidit
 		
 	*STP
 		tab stp
-		gen stp2=substr(stp,4,2)
+		gen stp2=substr(stp,8,2)
 		destring stp2, replace	
 		drop stp 
 		rename stp2 stp 
@@ -159,13 +159,13 @@ noi di "For each date variable indicating a comorbidity, define whether morbidit
 		tab region
 		gen region_n=.
 		replace region_n=1 if region=="East Midlands"
-		replace region_n=2 if region=="East of England"
+		replace region_n=2 if region=="East"
 		replace region_n=3 if region=="London"
 		replace region_n=4 if region=="North East"
 		replace region_n=5 if region=="North West"
 		replace region_n=6 if region=="South East"
 		replace region_n=7 if region=="West Midlands"
-		replace region_n=8 if region=="Yorkshire and the Humber"
+		replace region_n=8 if region=="Yorkshire and The Humber"
 		tab region region_n, m
 		drop region
 		rename region_n region
