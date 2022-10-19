@@ -68,8 +68,6 @@ gen `var'date=date(`var', "DMY")
 	*easing 3
 	replace wave_test=5 if first_positive_test_date>=22628 & first_positive_test_date!=.
 	
-	label define wave 0 "Wave 1, 23/03/20-30/05/20" 1 "Easing 1, 31/05/20-06/09/20" 2 "Wave 2, 07/09/20-23/04-21" 3 "Easing 2, 24/04/21 to 27/05/21" 4 "Wave 3, 28/05/21-13/12/21" 5 "Easing 3, 14/12/21-01/09/22"	
-	label values wave_test wave  
 	
 	
 	export delimited using "$outdir/cr_dataset_1b.csv", replace	
