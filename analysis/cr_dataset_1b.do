@@ -28,7 +28,17 @@
 	cap log using "$outdir/cr_dataset_1b.txt", replace t
 
 *import dataset from 1a
-	import delimited "$outdir/cr_dataset_1a.csv"	
+	import delimited "$outdir/cr_dataset_1a.csv", clear	
+
+*noi di "CONVERT DATES TO STATA DATES" 
+sum
+foreach var of varlist covid_vax first_positive_test_date  {
+gen `var'date=date(`var', "DMY")
+	drop `var'
+	rename `var'date `var'
+	format `var' %td
+}
+	
 	
 *categorise additional variables required for objective 1b (calendar time of positive test)
 	display d(23March2020)
