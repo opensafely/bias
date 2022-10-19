@@ -23,8 +23,7 @@
     global logs $projectdir/logs
     dis "$logs"
 
-
-import delimited "$outdir/cr_dataset_1a.csv"
+import delimited "$outdir/cr_dataset_1a.csv", clear
 
 *label variables
 		label define smok 1 "Non-smoker" 2 "Ex-smoker" 3 "Current smoker"
@@ -64,32 +63,38 @@ syntax, variable(varname) condition(string)
 	*count if the variable is equal to a certain level, put in a local
 	cou if `variable' `condition'
 	local nwithcondition = r(N)
+	local roundednwithcondition=round(`nwithcondition',5)
 	*make another local of the n at each level divided by the total (percent)
-	local colpct = 100*(r(N)/`overalldenom')
+	local colpct = 100*(`roundednwithcondition'/`overalldenom')
 	*write that into a table with the n at each level and the percent
-	file write tablecontent (`nwithcondition')  (" (") %3.1f (`colpct') (")") _tab
+	file write tablecontent (`roundednwithcondition') _tab (" (") %3.1f (`colpct') (")") _tab
 
 	*count the number with the outcome (in_cis==yes) and make a local
 	cou if in_cis==1 
 	local in_cis=r(N)
+	local rin_cis=round(`in_cis',5)
 	*count the number with the outcome at each level of each variable, put in local
 	cou if in_cis==1 & `variable' `condition'
 	local in_ciswithcondition = r(N)
+	local roundedin_ciswithcondition=round(`in_ciswithcondition',5)
+
 	*generate the percent of those with the outcome at each level over the total with the outcome
-	local pct = 100*(`in_ciswithcondition'/`in_cis')
+	local pct = 100*(`roundedin_ciswithcondition'/`rin_cis')
 	*write it to the table 
-	file write tablecontent (`in_ciswithcondition') (" (") %4.2f  (`pct') (")") _tab
+	file write tablecontent (`roundedin_ciswithcondition') _tab (" (") %4.2f  (`pct') (")") _tab
 
 	*count those without the outcome and put in a local
 	cou if in_cis==0 
 	local not_in_cis=r(N)
+	local rnot_in_cis=round(`not_in_cis',5)
 	*count the number without the outcome at each level of each variable, put in local
 	cou if in_cis==0 & `variable' `condition'
 	local not_in_ciswithcondition = r(N)
+	local rnot_in_ciswithcondition=round(`not_in_ciswithcondition',5)
 	*generate the percent of those with the outcome at each level over the total with the outcome
-	local pct = 100*(`not_in_ciswithcondition '/`not_in_cis')
+	local pct = 100*(`rnot_in_ciswithcondition '/`rnot_in_cis')
 	*write it to the table 
-	file write tablecontent (`not_in_ciswithcondition') (" (") %4.2f  (`pct') (")") _n
+	file write tablecontent (`rnot_in_ciswithcondition') _tab (" (") %4.2f  (`pct') (")") _n
 	
 end
 
@@ -113,7 +118,9 @@ end
 
 *Set up output file
 cap file close tablecontent
-file open tablecontent using $tables/an_table_PublicationDescriptivesTable_1a.csv, write text replace
+file open tablecontent using $tables/an_table_PublicationDescriptivesTable_1a.tsv, write text replace
+
+file write tablecontent "variable" _tab "level" _tab "Total N" _tab "Total percent" _tab "In CIS, N" _tab "In CIS, percent" _tab "Not in CIS, N" _tab "Not in CIS, percent" _n
 
 gen byte cons=1
 tabulatevariable, variable(cons) start(1) end(1) 
@@ -196,3 +203,16 @@ file write tablecontent _n ("*missing could be included in 'not obese' (n = ") (
 */
 
 file close tablecontent
+
+*REDACT VALUES OF 5 OR LOWER, INCLUDING ZEROES (ZEROES MAY HAVE BEEN ROUNDED FROM COUNTS OF 1 OR 2)
+clear
+import delimited $tables/an_table_PublicationDescriptivesTable_1a.tsv
+	*redact if number is 5 or 0
+	local columns " "total" "incis" "notincis" "
+	foreach col in `columns' {
+		replace `col'n=. if `col'n<=5
+		replace `col'percent="redacted" if `col'n==.
+		
+	}
+	
+export delimited "$tables/an_table_PublicationDescriptivesTable_1a_redacted.tsv", replace

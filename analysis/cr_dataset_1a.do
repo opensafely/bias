@@ -3,7 +3,7 @@
 *	Project:		Bias
 *	Programmed by:	Emily Herrett
 *	Data used:		Data in memory (from input.csv)
-*	Data created:	analysis_dataset.dta  (main analysis dataset)
+*	Data created:	cr_dataset_1a.dta  (main analysis dataset)
 *	Other output:	None
 *
 ********************************************************************************
@@ -35,22 +35,30 @@ import delimited "$outdir/input"
 ****************************
 * DROP IF DIED ON/BEFORE STUDY START DATE
 	noi di "DIED ON/BEFORE STUDY START DATE:" 
-
+	count if died==1
+	*drop if died==1
+	
 * Age: Exclude children
 	noi di "DROPPING AGE<18:" 
 	drop if age<18
 
 * Age: Exclude those with implausible ages
 	assert age<.
-	noi di "DROPPING AGE<105:" 
-	drop if age>105
+	noi di "DROPPING AGE<120:" 
+	drop if age>120
 
 * Sex: Exclude categories other than M and F
 	assert inlist(sex, "M", "F", "I", "U")
 	noi di "DROPPING GENDER NOT M/F:" 
 	drop if inlist(sex, "I", "U")
 	 
-*Emily - other checks to cohort inclusion criteria
+*Other checks to cohort inclusion criteria
+	drop if is_registered_with_tpp==.
+	drop if has_follow_up==.
+	drop if is_registered_with_tpp_feb2020==.
+
+drop is_registered_with_tpp	has_follow_up is_registered_with_tpp_feb2020 died household_id
+
 
 ******************************
 *Convert strings to dates
@@ -267,7 +275,11 @@ noi di "For each date variable indicating a comorbidity, define whether morbidit
 		replace immunodeficiency=2 if permanent_immunodeficiency_index==1
 		drop temporary_immunodeficiency_index permanent_immunodeficiency_index
 		
-	foreach var of varlist covid_vax - dialysis {
+	foreach var of varlist bmi_date_measured smoking_status_date hypertension bp_sys_date_measured ///
+	bp_dias_date_measured dementia diabetes hba1c_percentage_date copd other_respiratory haem_cancer ///
+	permanent_immunodeficiency transplant asplenia aplastic_anaemia temporary_immunodeficiency ///
+	heart_failure stroke tia myocardial_infarct heart_disease pad vte af sle rheumatoid_arthritis ///
+	psoriasis chronic_liver_disease other_neuro creatinine_date dialysis {
 		drop `var'
 	}
 
