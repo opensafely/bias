@@ -33,7 +33,7 @@ actions:
     needs: [generate_study_population, create_dataset_1a]
     outputs:
       moderately_sensitive:
-        output: output/tables/an_table_PublicationDescriptivesTable_1a_redacted.tsv      
+        output: output/tables/an_table_PublicationDescriptivesTable_1a_redacted.csv      
 
   # Generate objective 1b table
   create_table_1b:
@@ -41,4 +41,4 @@ actions:
     needs: [generate_study_population, create_dataset_1a, create_dataset_1b]
     outputs:
       moderately_sensitive:
-        output: output/tables/an_table_PublicationDescriptivesTable_1b_os_redacted.tsv      
+        output: output/tables/an_table_PublicationDescriptivesTable_1b_os_redacted.csv      

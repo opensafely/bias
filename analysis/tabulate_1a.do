@@ -1,17 +1,19 @@
 	
-*RECREATING FIZZ'S NATURE TABLE
-***********************************************************************************
-*an_table_PublicationDescriptivesTable_1a
-*************************************************************************
-*Purpose: Create content that is ready to paste into a pre-formatted Word 
-* shell "Table 1" (main cohort descriptives) for the Risk Factors paper
-*create a table to compare those in CIS to those not in CIS, in terms of demographics and comorbidities
+********************************************************************************
+*	Do-file:		tabulate_1a.do
+*	Project:		Bias
+*	Programmed by:	Emily Herrett
+*	Data used:		Data in memory (from cr_dataset_1a.csv)
+*	Data created:	an_table_PublicationDescriptivesTable_1a_redacted.csv  
+*	Date drafted: 	17/4/2020, 13/10/2022
+********************************************************************************
+*	Purpose:		This do-file creates additional variables required for the 
+*					tabulation of objective 1a, Create table to mirror the risk 
+*					factors for COVID mortality research paper
+*					It creates a table to compare those in CIS to those not in CIS, 
+*					in terms of demographics and comorbidities
+********************************************************************************
 
-*Requires: final analysis dataset (cr_dataset_1a.dta)
-*Coding: Krishnan Bhaskaran, updated to this study by Emily_Herrett
-*
-*Date drafted: 17/4/2020, 13/10/2022
-*************************************************************************
 *set filepaths
     global projectdir `c(pwd)'
     dis "$projectdir"
@@ -118,7 +120,7 @@ end
 
 *Set up output file
 cap file close tablecontent
-file open tablecontent using $tables/an_table_PublicationDescriptivesTable_1a.tsv, write text replace
+file open tablecontent using $tables/an_table_PublicationDescriptivesTable_1a.csv, write text replace
 
 file write tablecontent "variable" _tab "level" _tab "Total N" _tab "Total percent" _tab "In CIS, N" _tab "In CIS, percent" _tab "Not in CIS, N" _tab "Not in CIS, percent" _n
 
@@ -206,7 +208,7 @@ file close tablecontent
 
 *REDACT VALUES OF 5 OR LOWER, INCLUDING ZEROES (ZEROES MAY HAVE BEEN ROUNDED FROM COUNTS OF 1 OR 2)
 clear
-import delimited $tables/an_table_PublicationDescriptivesTable_1a.tsv
+import delimited $tables/an_table_PublicationDescriptivesTable_1a.csv
 	*redact if number is 5 or 0
 	local columns " "total" "incis" "notincis" "
 	foreach col in `columns' {
@@ -215,4 +217,4 @@ import delimited $tables/an_table_PublicationDescriptivesTable_1a.tsv
 		
 	}
 	
-export delimited "$tables/an_table_PublicationDescriptivesTable_1a_redacted.tsv", replace
+export delimited "$tables/an_table_PublicationDescriptivesTable_1a_redacted.csv", replace

@@ -4,7 +4,7 @@
 *	Project:		Bias
 *	Programmed by:	Emily Herrett, based on code written by Krishnan Bhaskaran
 *	Data used:		cr_dataset_1b.csv
-*	Data created:	an_table_PublicationDescriptivesTable_1b_os_redacted.tsv  (1b analysis dataset)
+*	Data created:	an_table_PublicationDescriptivesTable_1b_os_redacted.csv  (1b analysis dataset)
 *   Date drafted: 19/10/2022
 ********************************************************************************
 *	Purpose:		This do-file creates additional variables required for the 
@@ -124,7 +124,7 @@ end
 
 *Set up output file
 cap file close tablecontent
-file open tablecontent using $tables/an_table_PublicationDescriptivesTable_1b_os.tsv, write text replace
+file open tablecontent using $tables/an_table_PublicationDescriptivesTable_1b_os.csv, write text replace
 
 file write tablecontent "variable" _tab "level" _tab "Total N" _tab "Total percent" _tab "Had COVID, N" _tab "Had COVID, percent" _tab "No COVID, N" _tab "No COVID, percent" _n
 
@@ -215,7 +215,7 @@ file close tablecontent
 
 *REDACT VALUES OF 5 OR LOWER, INCLUDING ZEROES (ZEROES MAY HAVE BEEN ROUNDED TO FROM COUNTS OF 1 OR 2; FIVES MAY HAVE BEEN ROUNDED DOWN FROM COUNTS OF 6 OR 7)
 clear
-import delimited $tables/an_table_PublicationDescriptivesTable_1b_os.tsv
+import delimited $tables/an_table_PublicationDescriptivesTable_1b_os.csv
 	*redact if number is 5 or 0
 	local columns " "total" "hadcovid" "nocovid" "
 	foreach col in `columns' {
@@ -224,4 +224,4 @@ import delimited $tables/an_table_PublicationDescriptivesTable_1b_os.tsv
 		
 	}
 	
-export delimited "$tables/an_table_PublicationDescriptivesTable_1b_os_redacted.tsv", replace
+export delimited "$tables/an_table_PublicationDescriptivesTable_1b_os_redacted.csv", replace
