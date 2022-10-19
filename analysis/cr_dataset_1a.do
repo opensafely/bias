@@ -8,7 +8,7 @@
 *
 ********************************************************************************
 *	Purpose:		This do-file creates the variables required for the 
-*					main analysis and saves into Stata datasets.
+*					main analysis and saves into a csv dataset.
 ********************************************************************************
 
 *set filepaths

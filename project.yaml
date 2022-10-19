@@ -34,3 +34,11 @@ actions:
     outputs:
       moderately_sensitive:
         output: output/tables/an_table_PublicationDescriptivesTable_1a_redacted.tsv      
+
+  # Generate objective 1b table
+  create_table_1a:
+    run: stata-mp:latest analysis/tabulate_1b.do
+    needs: [generate_study_population, create_dataset_1a, create_dataset_1b]
+    outputs:
+      moderately_sensitive:
+        output: output/tables/an_table_PublicationDescriptivesTable_1b_redacted.tsv      

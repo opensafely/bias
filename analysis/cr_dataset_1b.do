@@ -2,13 +2,13 @@
 *	Do-file:		cr_dataset_1b.do
 *	Project:		Bias
 *	Programmed by:	Emily Herrett
-*	Data used:		Data in memory (from input.csv)
-*	Data created:	analysis_dataset.dta  (main analysis dataset)
+*	Data used:		Data in memory (from cr_dataset_1a.csv)
+*	Data created:	cr_dataset_1b  (1b analysis dataset)
 *	Other output:	None
 *
 ********************************************************************************
-*	Purpose:		This do-file creates the variables required for the 
-*					main analysis and saves into Stata datasets.
+*	Purpose:		This do-file creates additional variables required for the 
+*					tabulation of objective 1b
 ********************************************************************************
 
 *set filepaths

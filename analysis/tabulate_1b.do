@@ -1,17 +1,17 @@
 	
-*RECREATING FIZZ'S NATURE TABLE
-***********************************************************************************
-*an_table_PublicationDescriptivesTable_1a
-*************************************************************************
-*Purpose: Create content that is ready to paste into a pre-formatted Word 
-* shell "Table 1" (main cohort descriptives) for the Risk Factors paper
-*create a table to compare those in CIS to those not in CIS, in terms of demographics and comorbidities
+********************************************************************************
+*	Do-file:		tabulate_1b.do
+*	Project:		Bias
+*	Programmed by:	Emily Herrett, based on code written by Krishnan Bhaskaran
+*	Data used:		cr_dataset_1b.csv
+*	Data created:	an_table_PublicationDescriptivesTable_1b_os_redacted.tsv  (1b analysis dataset)
+*   Date drafted: 19/10/2022
+********************************************************************************
+*	Purpose:		This do-file creates additional variables required for the 
+*					tabulation of objective 1b, to compare those in with and 
+*                   without SGSS test positive in COVID, in terms of demographics and comorbidities
+********************************************************************************
 
-*Requires: final analysis dataset (cr_dataset_1a.dta)
-*Coding: Krishnan Bhaskaran, updated to this study by Emily_Herrett
-*
-*Date drafted: 19/10/2022
-*************************************************************************
 *set filepaths
     global projectdir `c(pwd)'
     dis "$projectdir"
