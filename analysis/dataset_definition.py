@@ -23,19 +23,6 @@
 #          "incidence": 0.5,
 #      },
 #
-#      population=patients.satisfying(
-#          # first argument is a string defining the population of interest using elementary logic syntax (= != < <= >= > AND OR NOT + - * /)
-#          """
-#          (age >= 18 AND age < 120) AND
-#          is_registered_with_tpp AND
-#          (NOT died) AND
-#          (sex = "M" OR sex = "F") AND
-#          has_follow_up AND
-#          is_registered_with_tpp_feb2020
-#          """,
-#
-#      ),
-#
 #
 #      # define the study variables
 #      # in CIS or not
@@ -736,6 +723,19 @@
 #              return_expectations={"date": {"latest": "index_date"}},
 #          ),
 #
+#
+#      population=patients.satisfying(
+#          # first argument is a string defining the population of interest using elementary logic syntax (= != < <= >= > AND OR NOT + - * /)
+#          """
+#          (age >= 18 AND age < 120) AND
+#          is_registered_with_tpp AND
+#          (NOT died) AND
+#          (sex = "M" OR sex = "F") AND
+#          has_follow_up AND
+#          is_registered_with_tpp_feb2020
+#          """,
+#
+#      ),
 #  )
 #
 #
