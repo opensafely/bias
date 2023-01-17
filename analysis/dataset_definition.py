@@ -21,7 +21,9 @@ dataset = Dataset()
 #
 #  # Specify study definition
 #  study = StudyDefinition(
-#      index_date="2022-09-01",
+
+index_date = "2022-09-01"
+
 #      default_expectations={
 #          "date": {"earliest": "1900-01-01", "latest": "today"},
 #          "rate": "exponential_increase",
@@ -66,15 +68,9 @@ dataset = Dataset()
 #                  "category": {"ratios": {"M": 0.49, "F": 0.51}},
 #              }
 #          ),
-#
-#          ## age
-#          age=patients.age_as_of(
-#              "index_date",
-#              return_expectations={
-#                  "rate": "universal",
-#                  "int": {"distribution": "population_ages"},
-#              },
-#          ),
+
+dataset.age = (index_date - t.patients.date_of_birth).years
+
 #
 #          ## age groups
 #          ageband_broad = patients.categorised_as(
@@ -745,4 +741,4 @@ dataset = Dataset()
 #
 #
 
-dataset.set_population(t.patients.exists_for_patient())
+dataset.set_population((dataset.age >= 18) & (dataset.age < 120))
