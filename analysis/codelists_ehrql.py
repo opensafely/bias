@@ -26,18 +26,18 @@ def combine_codelists(*codelists):
 
 ethnicity_codes = codelist_from_csv(
     CODELIST_DIR / "opensafely-ethnicity-snomed-0removed.csv",
-    system="snomed",
+    system="snomedct",
     column="snomedcode",
 )
 
 high_risk_codes = codelist(
     ["1300561000000107"],
-    system="snomed",
+    system="snomedct",
 )
 
 not_high_risk_codes = codelist(
     ["1300591000000101", "1300571000000100"],
-    system="snomed",
+    system="snomedct",
 )
 
 clear_smoking_codes = codelist_from_csv(
@@ -104,7 +104,7 @@ chronic_respiratory_disease_codes = codelist_from_csv(
 
 pred_codes = codelist_from_csv(
     CODELIST_DIR / "opensafely-asthma-oral-prednisolone-medication.csv",
-    system="snomed",
+    system="snomedct",
     column="snomed_id",
 )
 
@@ -260,6 +260,6 @@ dialysis_codes = codelist_from_csv(
 
 creatinine_codes = codelist_from_csv(
     CODELIST_DIR / "user-bangzheng-creatinine-value.csv",
-    system="snomed",
+    system="snomedct",
     column="code",
 )
