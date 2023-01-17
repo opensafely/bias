@@ -1,3 +1,8 @@
+from databuilder.ehrql import Dataset
+from databuilder.tables.beta import tpp as t
+
+dataset = Dataset()
+
 #  # STUDY DEFINITION FOR BASELINE CHARACTERISTICS
 #
 #  # Import necessary functions
@@ -739,3 +744,5 @@
 #  )
 #
 #
+
+dataset.set_population(t.patients.exists_for_patient())
