@@ -126,18 +126,11 @@ dataset.age = (index_date - t.patients.date_of_birth).years
 #          ),
 #
 #
-#      # REGISTRATION DETAILS
-#          # died
-#          died=patients.died_from_any_cause(
-#              on_or_before="index_date",
-#              return_expectations = {
-#              "incidence": 1.0,
-#              }
-#
-#          ),
 
 
 # REGISTRATION DETAILS
+
+dataset.died = t.ons_deaths.take(t.ons_deaths.date <= index_date).exists_for_patient()
 
 practice_reg = practice_registrations_active_for_patient_at(index_date)
 dataset.is_registered_with_tpp = practice_reg.exists_for_patient()
@@ -715,28 +708,13 @@ dataset.is_registered_with_tpp_feb2020 = practice_registrations_active_for_patie
 #              date_format="YYYY-MM-DD",
 #              return_expectations={"date": {"latest": "index_date"}},
 #          ),
-#
-#
-#      population=patients.satisfying(
-#          # first argument is a string defining the population of interest using elementary logic syntax (= != < <= >= > AND OR NOT + - * /)
-#          """
-#          (age >= 18 AND age < 120) AND
-#          is_registered_with_tpp AND
-#          (NOT died) AND
-#          (sex = "M" OR sex = "F") AND
-#          has_follow_up AND
-#          is_registered_with_tpp_feb2020
-#          """,
-#
-#      ),
-#  )
-#
-#
+
 
 dataset.set_population(
     (dataset.age >= 18)
     & (dataset.age < 120)
     & dataset.is_registered_with_tpp
+    & ~dataset.died
     & dataset.has_follow_up
     & dataset.is_registered_with_tpp_feb2020
 )
