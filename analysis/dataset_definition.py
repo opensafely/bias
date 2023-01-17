@@ -1,5 +1,6 @@
-from databuilder.ehrql import Dataset
+from databuilder.ehrql import Dataset, days
 from databuilder.tables.beta import tpp as t
+from variables_lib import practice_registrations_active_for_patient_at
 
 dataset = Dataset()
 
@@ -134,31 +135,22 @@ dataset.age = (index_date - t.patients.date_of_birth).years
 #              }
 #
 #          ),
-#
-#          ## registered with TPP on index date
-#          is_registered_with_tpp=patients.registered_as_of(
-#              "index_date",
-#              return_expectations = {
-#              "incidence": 1.0,
-#              }
-#          ),
-#
-#          ## registered with TPP on date of household identification (1st Feb 2020)
-#          is_registered_with_tpp_feb2020=patients.registered_as_of(
-#              "2020-02-01",
-#              return_expectations = {
-#              "incidence": 1.0,
-#              }
-#          ),
-#
-#          ## registered with one practice for 90 days prior to index date
-#          has_follow_up=patients.registered_with_one_practice_between(
-#              "index_date - 90 days", "index_date",
-#              return_expectations = {
-#              "incidence": 1.0,
-#              }
-#          ),
-#
+
+
+# REGISTRATION DETAILS
+
+practice_reg = practice_registrations_active_for_patient_at(index_date)
+dataset.is_registered_with_tpp = practice_reg.exists_for_patient()
+
+# registered with the practice for 90 days prior to index date
+dataset.has_follow_up = practice_reg.start_date <= index_date - days(90)
+
+# registered with TPP on date of household identification (1st Feb 2020)
+dataset.is_registered_with_tpp_feb2020 = practice_registrations_active_for_patient_at(
+    "2020-02-01"
+).exists_for_patient()
+
+
 #      # HOUSEHOLD INFORMATION
 #
 #          ## household ID
@@ -741,4 +733,10 @@ dataset.age = (index_date - t.patients.date_of_birth).years
 #
 #
 
-dataset.set_population((dataset.age >= 18) & (dataset.age < 120))
+dataset.set_population(
+    (dataset.age >= 18)
+    & (dataset.age < 120)
+    & dataset.is_registered_with_tpp
+    & dataset.has_follow_up
+    & dataset.is_registered_with_tpp_feb2020
+)
