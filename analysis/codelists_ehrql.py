@@ -28,7 +28,6 @@ ethnicity_codes = codelist_from_csv(
     CODELIST_DIR / "opensafely-ethnicity-snomed-0removed.csv",
     system="snomed",
     column="snomedcode",
-    category_column="Grouping_6",
 )
 
 high_risk_codes = codelist(
@@ -45,7 +44,6 @@ clear_smoking_codes = codelist_from_csv(
     CODELIST_DIR / "opensafely-smoking-clear.csv",
     system="ctv3",
     column="CTV3Code",
-    category_column="Category",
 )
 
 systolic_blood_pressure_codes = codelist(
