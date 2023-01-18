@@ -26,26 +26,22 @@ dataset = Dataset()
 index_date = "2022-09-01"
 
 # define the study variables
+
 # in CIS or not
 dataset.in_cis = t.ons_cis.take(
     t.ons_cis.visit_date.is_between(index_date - years(3), index_date)
 ).exists_for_patient()
 
-#      # vaccination
-#      covid_vax = patients.with_tpp_vaccination_record(
-#          returning = "date",
-#          target_disease_matches="SARS-2 CORONAVIRUS",
-#          find_first_match_in_period = True,
-#          on_or_before="index_date",
-#          date_format = "YYYY-MM-DD",
-#          return_expectations = {
-#          "date": {
-#              "earliest": "2020-12-08",
-#              "latest": "index_date",
-#          }
-#          },
-#      ),
-#
+# vaccination
+vax = t.vaccinations
+dataset.covid_vax = (
+    vax.take(vax.target_disease == "SARS-2 CORONAVIRUS")
+    .take(vax.date <= index_date)
+    .sort_by(vax.date)
+    .first_for_patient()
+    .date
+)
+
 #      # DEMOGRAPHICS - sex, age, ethnicity
 #
 #          ## sex
