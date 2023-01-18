@@ -1,4 +1,4 @@
-from databuilder.ehrql import Dataset, days
+from databuilder.ehrql import Dataset, days, years
 from databuilder.tables.beta import tpp as t
 from variables_lib import practice_registrations_active_for_patient_at
 
@@ -25,26 +25,12 @@ dataset = Dataset()
 
 index_date = "2022-09-01"
 
-#      default_expectations={
-#          "date": {"earliest": "1900-01-01", "latest": "today"},
-#          "rate": "exponential_increase",
-#          "incidence": 0.5,
-#      },
-#
-#
-#      # define the study variables
-#      # in CIS or not
-#      in_cis = patients.with_an_ons_cis_record(
-#          returning="binary_flag",
-#          date_filter_column="visit_date",
-#          between=["index_date - 3 years", "index_date"],
-#          return_expectations = {
-#          "incidence": 0.01,
-#          }
-#
-#      ),
-#
-#
+# define the study variables
+# in CIS or not
+dataset.in_cis = t.ons_cis.take(
+    t.ons_cis.visit_date.is_between(index_date - years(3), index_date)
+).exists_for_patient()
+
 #      # vaccination
 #      covid_vax = patients.with_tpp_vaccination_record(
 #          returning = "date",
