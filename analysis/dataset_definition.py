@@ -1,4 +1,4 @@
-from databuilder.ehrql import Dataset, days, years
+from databuilder.ehrql import Dataset, case, days, when, years
 from databuilder.tables.beta import tpp as t
 from variables_lib import practice_registrations_active_for_patient_at
 
@@ -42,36 +42,25 @@ dataset.covid_vax = (
     .date
 )
 
-#      # DEMOGRAPHICS - sex, age, ethnicity
-#
-#          ## sex
-#          sex=patients.sex(
-#              return_expectations={
-#                  "rate": "universal",
-#                  "category": {"ratios": {"M": 0.49, "F": 0.51}},
-#              }
-#          ),
 
-dataset.age = (index_date - t.patients.date_of_birth).years
+# DEMOGRAPHICS - sex, age, ethnicity
 
-#
-#          ## age groups
-#          ageband_broad = patients.categorised_as(
-#              {
-#                  "0": "DEFAULT",
-#                  "18-39": """ age >=  18 AND age < 40""",
-#                  "40-49": """ age >=  40 AND age < 50""",
-#                  "50-59": """ age >=  50 AND age < 60""",
-#                  "60-69": """ age >=  60 AND age < 70""",
-#                  "70-79": """ age >=  70 AND age < 80""",
-#                  "80+": """ age >=  80 AND age < 120""",
-#              },
-#              return_expectations={
-#                  "rate":"universal",
-#                  "category": {"ratios": {"18-39": 0.3, "40-49": 0.15, "50-59": 0.15, "60-69": 0.2, "70-79":0.1, "80+":0.1 }}
-#              },
-#          ),
-#
+# Note possible values are now: male, female, intersex, unknown
+dataset.sex = t.patients.sex
+
+age = (index_date - t.patients.date_of_birth).years
+dataset.age = age
+dataset.ageband_broad = case(
+    when((age >= 18) & (age < 40)).then("18-39"),
+    when((age >= 40) & (age < 50)).then("40-49"),
+    when((age >= 50) & (age < 60)).then("50-59"),
+    when((age >= 60) & (age < 70)).then("60-69"),
+    when((age >= 70) & (age < 80)).then("70-79"),
+    when((age >= 80) & (age < 120)).then("80+"),
+    default="0",
+)
+
+
 #          ## Ethnicity
 #          ethnicity = patients.categorised_as(
 #              {"Missing": "DEFAULT",
