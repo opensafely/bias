@@ -1,3 +1,4 @@
+from codelists_ehrql import *
 from databuilder.ehrql import Dataset, case, days, when, years
 from databuilder.tables.beta import tpp as t
 from variables_lib import practice_registrations_active_for_patient_at
@@ -61,42 +62,27 @@ dataset.ageband_broad = case(
 )
 
 
-#          ## Ethnicity
-#          ethnicity = patients.categorised_as(
-#              {"Missing": "DEFAULT",
-#              "White": "eth='1' OR (NOT eth AND ethnicity_sus='1')",
-#              "Mixed": "eth='2' OR (NOT eth AND ethnicity_sus='2')",
-#              "South Asian": "eth='3' OR (NOT eth AND ethnicity_sus='3')",
-#              "Black": "eth='4' OR (NOT eth AND ethnicity_sus='4')",
-#              "Other": "eth='5' OR (NOT eth AND ethnicity_sus='5')",
-#              },
-#              return_expectations={
-#              "category": {"ratios": {"White": 0.6, "Mixed": 0.1, "South Asian": 0.1, "Black": 0.1, "Other": 0.1}},
-#              "incidence": 0.4,
-#              },
-#
-#              ethnicity_sus = patients.with_ethnicity_from_sus(
-#                  returning="group_6",
-#                  use_most_frequent_code=True,
-#                  return_expectations={
-#                      "category": {"ratios": {"1": 0.6, "2": 0.1, "3": 0.1, "4": 0.1, "5": 0.1}},
-#                      "incidence": 0.4,
-#                      },
-#              ),
-#
-#              eth=patients.with_these_clinical_events(
-#                  ethnicity_codes,
-#                  returning="category",
-#                  find_last_match_in_period=True,
-#                  on_or_before="today",
-#                  return_expectations={
-#                      "category": {"ratios": {"1": 0.6, "2": 0.1, "3": 0.1, "4":0.1,"5": 0.1}},
-#                      "incidence": 0.75,
-#                  },
-#              ),
-#          ),
-#
-#
+# Ethnicity
+ethnicity_primary_care = (
+    t.clinical_events.take(t.clinical_events.snomedct_code.is_in(ethnicity_codes))
+    .sort_by(t.clinical_events.date)
+    .last_for_patient()
+    .snomedct_code.to_category(ethnicity_codes.Grouping_6)
+)
+# TODO: SUS Ethnicity is not yet available in Data Builder, see:
+# https://github.com/opensafely-core/databuilder/issues/937
+ethnicity_sus = None
+ethnicity_combined = ethnicity_primary_care.if_null_then(ethnicity_sus)
+dataset.ethnicity = ethnicity_combined.map_values(
+    {
+        "1": "White",
+        "2": "Mixed",
+        "3": "South Asian",
+        "4": "Black",
+        "5": "Other",
+    },
+    default="Missing",
+)
 
 
 # REGISTRATION DETAILS
