@@ -101,29 +101,13 @@ dataset.is_registered_with_tpp_feb2020 = practice_registrations_active_for_patie
 ).exists_for_patient()
 
 
-#      # HOUSEHOLD INFORMATION
-#
-#          ## household ID
-#          household_id=patients.household_as_of(
-#              "2020-02-01",
-#              returning="pseudo_id",
-#              return_expectations={
-#                  "int": {"distribution": "normal", "mean": 1000, "stddev": 200},
-#                  "incidence": 1,
-#              },
-#          ),
-#
-#           ## household size
-#          household_size=patients.household_as_of(
-#              "2020-02-01",
-#              returning="household_size",
-#              return_expectations={
-#                  "int": {"distribution": "normal", "mean": 3, "stddev": 1},
-#                  "incidence": 1,
-#              },
-#          ),
-#
-#
+# HOUSEHOLD INFORMATION
+
+household = t.household_memberships_2020
+dataset.household_id = household.household_pseudo_id
+dataset.household_size = household.household_size
+
+
 #      # ADMINISTRATIVE INFORMATION
 #
 #          ## index of multiple deprivation, estimate of SES based on patient post code  -
