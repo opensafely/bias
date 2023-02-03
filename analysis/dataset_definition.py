@@ -256,50 +256,31 @@ dataset.other_respiratory = (
     .date
 )
 
-#
-#          # asthma
-#          asthma=patients.categorised_as(
-#              {
-#                  "0": "DEFAULT",
-#                  "1": """
-#                      (
-#                      recent_asthma_code OR (
-#                          asthma_code_ever AND NOT
-#                          copd_code_ever
-#                      )
-#                      ) AND (
-#                      prednisolone_last_year = 0 OR
-#                      prednisolone_last_year > 4
-#                      )
-#                  """,
-#                  "2": """
-#                      (
-#                      recent_asthma_code OR (
-#                          asthma_code_ever AND NOT
-#                          copd_code_ever
-#                      )
-#                      ) AND
-#                      prednisolone_last_year > 0 AND
-#                      prednisolone_last_year < 5
-#
-#                  """,
-#              },
-#              return_expectations={
-#                  "category": {"ratios": {"0": 0.6, "1": 0.1, "2": 0.3}}
-#              },
-#              recent_asthma_code=patients.with_these_clinical_events(
-#                  asthma_codes, between=["index_date - 3 years", "index_date"],
-#              ),
-#              asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
-#              copd_code_ever=patients.with_these_clinical_events(
-#                  chronic_respiratory_disease_codes
-#              ),
-#              prednisolone_last_year=patients.with_these_medications(
-#                  pred_codes,
-#                  between=["index_date - 365 days", "index_date"],
-#                  returning="number_of_matches_in_period",
-#              ),
-#          ),
+# asthma
+latest_asthma_code_date = (
+    clinical_events_with_codes(asthma_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+recent_asthma_code = latest_asthma_code_date >= index_date - days(3 * 365)
+asthma_code_ever = latest_asthma_code_date.is_not_null()
+copd_code_ever = clinical_events_with_codes(
+    chronic_respiratory_disease_codes
+).exists_for_patient()
+
+meds = t.medications
+prednisolone_last_year = (
+    meds.take(meds.dmd_code.is_in(pred_codes))
+    .take(meds.date.is_on_or_between(index_date - days(365), index_date))
+    .count_for_patient()
+)
+
+dataset.asthma = case(
+    when(~recent_asthma_code & (~asthma_code_ever | copd_code_ever)).then("0"),
+    when((prednisolone_last_year == 0) | (prednisolone_last_year > 4)).then("1"),
+    when((prednisolone_last_year > 0) & (prednisolone_last_year < 5)).then("2"),
+    default="0",
+)
 
 # CANCER - 3 TYPES
 # TODO: Union needs to be natively supported by the Codelist class

@@ -104,7 +104,7 @@ chronic_respiratory_disease_codes = codelist_from_csv(
 
 pred_codes = codelist_from_csv(
     CODELIST_DIR / "opensafely-asthma-oral-prednisolone-medication.csv",
-    system="snomedct",
+    system="dmd",
     column="snomed_id",
 )
 
