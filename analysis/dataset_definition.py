@@ -3,6 +3,7 @@ from databuilder.ehrql import Dataset, case, days, when, years
 from databuilder.tables.beta import tpp as t
 from variables_lib import (
     addresses_active_for_patient_at,
+    clinical_events_with_codes,
     practice_registrations_active_for_patient_at,
 )
 
@@ -69,8 +70,7 @@ dataset.ageband_broad = case(
 
 # Ethnicity
 ethnicity_primary_care = (
-    t.clinical_events.take(t.clinical_events.snomedct_code.is_in(ethnicity_codes))
-    .sort_by(t.clinical_events.date)
+    clinical_events_with_codes(ethnicity_codes)
     .last_for_patient()
     .snomedct_code.to_category(ethnicity_codes.Grouping_6)
 )
@@ -222,18 +222,18 @@ dataset.region = practice_reg.practice_nuts1_region_name
 #              return_expectations={"date": {"latest": "index_date"}},
 #          ),
 #
-#      # COMORBIDITIES
-#
-#          # HYPERTENSION - CLINICAL CODES ONLY
-#          hypertension=patients.with_these_clinical_events(
-#              hypertension_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_first_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
+
+
+# COMORBIDITIES
+
+
+# HYPERTENSION - CLINICAL CODES ONLY
+dataset.hypertension = (
+    clinical_events_with_codes(hypertension_codes, on_or_before=index_date)
+    .first_for_patient()
+    .date
+)
+
 #          # HIGH BLOOD PRESSURE
 #          # https://github.com/ebmdatalab/tpp-sql-notebook/issues/35
 #          bp_sys=patients.mean_recorded_value(
@@ -261,71 +261,47 @@ dataset.region = practice_reg.practice_nuts1_region_name
 #              },
 #          ),
 #
-#          # DEMENTIA
-#          dementia=patients.with_these_clinical_events(
-#              dementia_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_first_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          # DIABETES
-#          diabetes=patients.with_these_clinical_events(
-#              diabetes_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_first_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#          hba1c_mmol_per_mol=patients.with_these_clinical_events(
-#              hba1c_new_codes,
-#              find_last_match_in_period=True,
-#              on_or_before="index_date",
-#              returning="numeric_value",
-#              include_date_of_match=True,
-#              include_month=True,
-#              return_expectations={
-#                  "date": {"latest": "index_date"},
-#                  "float": {"distribution": "normal", "mean": 40.0, "stddev": 20},
-#                  "incidence": 0.95,
-#              },
-#          ),
-#          hba1c_percentage=patients.with_these_clinical_events(
-#              hba1c_old_codes,
-#              find_last_match_in_period=True,
-#              on_or_before="index_date",
-#              returning="numeric_value",
-#              include_date_of_match=True,
-#              include_month=True,
-#              return_expectations={
-#                  "date": {"latest": "index_date"},
-#                  "float": {"distribution": "normal", "mean": 5, "stddev": 2},
-#                  "incidence": 0.95,
-#              },
-#          ),
-#
-#          # COPD
-#          copd=patients.with_these_clinical_events(
-#              copd_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_first_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          # OTHER RESPIRATORY DISEASES
-#          other_respiratory=patients.with_these_clinical_events(
-#              other_respiratory_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_first_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
+
+# DEMENTIA
+dataset.dementia = (
+    clinical_events_with_codes(dementia_codes, on_or_before=index_date)
+    .first_for_patient()
+    .date
+)
+
+# DIABETES
+dataset.diabetes = (
+    clinical_events_with_codes(diabetes_codes, on_or_before=index_date)
+    .first_for_patient()
+    .date
+)
+
+hba1c_measurement = clinical_events_with_codes(
+    hba1c_new_codes, on_or_before=index_date
+).last_for_patient()
+dataset.hba1c_mmol_per_mol = hba1c_measurement.numeric_value
+dataset.hba1c_mmol_per_mol_date = hba1c_measurement.date
+
+hba1c_percentage = clinical_events_with_codes(
+    hba1c_old_codes, on_or_before=index_date
+).last_for_patient()
+dataset.hba1c_percentage = hba1c_percentage.numeric_value
+dataset.hba1c_percentage_date = hba1c_percentage.date
+
+# COPD
+dataset.copd = (
+    clinical_events_with_codes(copd_codes, on_or_before=index_date)
+    .first_for_patient()
+    .date
+)
+
+# OTHER RESPIRATORY DISEASES
+dataset.other_respiratory = (
+    clinical_events_with_codes(other_respiratory_codes, on_or_before=index_date)
+    .first_for_patient()
+    .date
+)
+
 #
 #          # asthma
 #          asthma=patients.categorised_as(
@@ -370,238 +346,152 @@ dataset.region = practice_reg.practice_nuts1_region_name
 #                  returning="number_of_matches_in_period",
 #              ),
 #          ),
-#
-#          # CANCER - 3 TYPES
-#          cancer=patients.with_these_clinical_events(
-#              combine_codelists(lung_cancer_codes, other_cancer_codes),
-#              on_or_before="index_date",
-#              returning="date",
-#              find_first_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          haem_cancer=patients.with_these_clinical_events(
-#              haem_cancer_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_first_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          # IMMUNOSUPPRESSION
-#          #### PERMANENT
-#          permanent_immunodeficiency=patients.with_these_clinical_events(
-#              combine_codelists(
-#                  hiv_codes,
-#                  permanent_immune_codes,
-#                  sickle_cell_codes,
-#              ),
-#              on_or_before="index_date",
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          transplant=patients.with_these_clinical_events(
-#              organ_transplant_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          asplenia=patients.with_these_clinical_events(
-#              spleen_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          aplastic_anaemia=patients.with_these_clinical_events(
-#              aplastic_codes,
-#              between=["index_date - 365 days", "index_date"],
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={
-#                  "date": {"earliest": "2019-03-01", "latest": "index_date"}
-#              },
-#          ),
-#          #### TEMPORARY
-#          temporary_immunodeficiency=patients.with_these_clinical_events(
-#              temp_immune_codes,
-#              between=["2019-03-01", "index_date"],
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={
-#                  "date": {"earliest": "2019-03-01", "latest": "index_date"}
-#              },
-#          ),
-#
-#          # CARDIOVASCULAR DISEASE
-#              # HEART FAILURE
-#              heart_failure=patients.with_these_clinical_events(
-#                  heart_failure_codes,
-#                  on_or_before="index_date",
-#                  returning="date",
-#                  find_first_match_in_period=True,
-#                  date_format="YYYY-MM-DD",
-#                  return_expectations={"date": {"latest": "index_date"}},
-#              ),
-#
-#              # stroke
-#              stroke=patients.with_these_clinical_events(
-#                  stroke_codes,
-#                  on_or_before="index_date",
-#                  returning="date",
-#                  find_last_match_in_period=True,
-#                  date_format="YYYY-MM-DD",
-#                  return_expectations={"date": {"latest": "index_date"}},
-#              ),
-#              # Transient ischaemic attack
-#              tia=patients.with_these_clinical_events(
-#                  tia_codes,
-#                  on_or_before="index_date",
-#                  returning="date",
-#                  find_last_match_in_period=True,
-#                  date_format="YYYY-MM-DD",
-#                  return_expectations={"date": {"latest": "index_date"}},
-#              ),
-#              # Myocardial infarction
-#              myocardial_infarct=patients.with_these_clinical_events(
-#                  mi_codes,
-#                  on_or_before="index_date",
-#                  returning="date",
-#                  find_last_match_in_period=True,
-#                  date_format="YYYY-MM-DD",
-#                  return_expectations={"date": {"latest": "index_date"}},
-#              ),
-#              # Chronic heart disease
-#              heart_disease=patients.with_these_clinical_events(
-#                  chd_codes,
-#                  on_or_before="index_date",
-#                  returning="date",
-#                  find_last_match_in_period=True,
-#                  date_format="YYYY-MM-DD",
-#                  return_expectations={"date": {"latest": "index_date"}},
-#              ),
-#              # Peripheral artery disease
-#              pad=patients.with_these_clinical_events(
-#                  pad_codes,
-#                  on_or_before="index_date",
-#                  returning="date",
-#                  find_last_match_in_period=True,
-#                  date_format="YYYY-MM-DD",
-#                  return_expectations={"date": {"latest": "index_date"}},
-#              ),
-#              # Venous thromboembolism
-#              vte=patients.with_these_clinical_events(
-#                  vte_codes,
-#                  on_or_before="index_date",
-#                  returning="date",
-#                  find_last_match_in_period=True,
-#                  date_format="YYYY-MM-DD",
-#                  return_expectations={"date": {"latest": "index_date"}},
-#              ),
-#
-#              # Atrial fibrillation
-#              af=patients.with_these_clinical_events(
-#                  af_codes,
-#                  on_or_before="index_date",
-#                  returning="date",
-#                  find_last_match_in_period=True,
-#                  date_format="YYYY-MM-DD",
-#                  return_expectations={"date": {"latest": "index_date"}},
-#              ),
-#
-#          # Lupus
-#          systemic_lupus_erythematosus=patients.with_these_clinical_events(
-#              sle_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          # rheumatoid arthritis
-#          rheumatoid_arthritis=patients.with_these_clinical_events(
-#              rheumatoid_arthritis_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          # psoriasis
-#          psoriasis=patients.with_these_clinical_events(
-#              psoriasis_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          # liver disease
-#          chronic_liver_disease=patients.with_these_clinical_events(
-#              liver_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          # other neurological disease
-#          other_neuro = patients.with_these_clinical_events(
-#              other_neuro_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
-#          # CKD
-#          creatinine=patients.with_these_clinical_events(
-#              creatinine_codes,
-#              find_last_match_in_period=True,
-#              on_or_before="index_date",
-#              returning="numeric_value",
-#              include_date_of_match=True,
-#              include_month=True,
-#              return_expectations={
-#                  "float": {"distribution": "normal", "mean": 60.0, "stddev": 30},
-#                  "date": {"earliest": "2019-02-28", "latest": "index_date"},
-#                  "incidence": 0.95,
-#              },
-#          ),
-#
-#          creatinine_date = patients.with_these_clinical_events(
-#              creatinine_codes,
-#              find_last_match_in_period = True,
-#              returning = "date",
-#              date_format = "YYYY-MM-DD",
-#          ),
-#
-#          # kidney dialysis
-#          dialysis=patients.with_these_clinical_events(
-#              dialysis_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
+
+# CANCER - 3 TYPES
+# TODO: Union needs to be natively supported by the Codelist class
+combined_cancer_codes = lung_cancer_codes.codes | other_cancer_codes.codes
+dataset.cancer = (
+    clinical_events_with_codes(combined_cancer_codes, on_or_before=index_date)
+    .first_for_patient()
+    .date
+)
+dataset.haem_cancer = (
+    clinical_events_with_codes(haem_cancer_codes, on_or_before=index_date)
+    .first_for_patient()
+    .date
+)
+
+# IMMUNOSUPPRESSION
+
+# ### PERMANENT
+combined_immune_codes = (
+    hiv_codes.codes | permanent_immune_codes.codes | sickle_cell_codes.codes
+)
+dataset.permanent_immunodeficiency = (
+    clinical_events_with_codes(combined_immune_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+
+dataset.transplant = (
+    clinical_events_with_codes(organ_transplant_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+dataset.asplenia = (
+    clinical_events_with_codes(spleen_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+dataset.aplastic_anaemia = (
+    clinical_events_with_codes(
+        aplastic_codes, on_or_between=[index_date - days(365), index_date]
+    )
+    .last_for_patient()
+    .date
+)
+
+# ### TEMPORARY
+dataset.temporary_immunodeficiency = (
+    clinical_events_with_codes(
+        temp_immune_codes, on_or_between=["2019-03-01", index_date]
+    )
+    .last_for_patient()
+    .date
+)
+
+# CARDIOVASCULAR DISEASE
+
+# HEART FAILURE
+dataset.heart_failure = (
+    clinical_events_with_codes(heart_failure_codes, on_or_before=index_date)
+    .first_for_patient()
+    .date
+)
+# stroke
+dataset.stroke = (
+    clinical_events_with_codes(stroke_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# Transient ischaemic attack
+dataset.tia = (
+    clinical_events_with_codes(tia_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# Myocardial infarction
+dataset.myocardial_infarct = (
+    clinical_events_with_codes(mi_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# Chronic heart disease
+dataset.heart_disease = (
+    clinical_events_with_codes(chd_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# Peripheral artery disease
+dataset.pad = (
+    clinical_events_with_codes(pad_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# Venous thromboembolism
+dataset.vte = (
+    clinical_events_with_codes(vte_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# Atrial fibrillation
+dataset.af = (
+    clinical_events_with_codes(af_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# Lupus
+dataset.systemic_lupus_erythematosus = (
+    clinical_events_with_codes(sle_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# rheumatoid arthritis
+dataset.rheumatoid_arthritis = (
+    clinical_events_with_codes(rheumatoid_arthritis_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# psoriasis
+dataset.psoriasis = (
+    clinical_events_with_codes(psoriasis_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# liver disease
+dataset.chronic_liver_disease = (
+    clinical_events_with_codes(liver_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# other neurological disease
+dataset.other_neuro = (
+    clinical_events_with_codes(other_neuro_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
+# CKD
+creatinine = clinical_events_with_codes(
+    creatinine_codes, on_or_before=index_date
+).last_for_patient()
+dataset.creatinine = creatinine.numeric_value
+dataset.creatinine_date = creatinine.date
+# kidney dialysis
+dataset.dialysis = (
+    clinical_events_with_codes(dialysis_codes, on_or_before=index_date)
+    .last_for_patient()
+    .date
+)
 
 
 dataset.set_population(

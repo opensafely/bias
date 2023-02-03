@@ -1,3 +1,4 @@
+from databuilder.codes import CTV3Code, SNOMEDCTCode
 from databuilder.ehrql import case, when
 from databuilder.tables.beta import tpp
 
@@ -46,3 +47,42 @@ def addresses_active_for_patient_at(date):
         -addr.address_id,
     )
     return ordered.last_for_patient()
+
+
+def clinical_events_with_codes(
+    codelist,
+    after=None,
+    before=None,
+    on_or_after=None,
+    on_or_before=None,
+    between=None,
+    on_or_between=None,
+):
+    events = tpp.clinical_events
+    # TODO: Codelists should be iterable
+    codes = codelist.codes if hasattr(codelist, "codes") else codelist
+    first_code = next(iter(codes))
+
+    if isinstance(first_code, SNOMEDCTCode):
+        events = events.take(events.snomedct_code.is_in(codelist))
+    elif isinstance(first_code, CTV3Code):
+        events = events.take(events.ctv3_code.is_in(codelist))
+    else:
+        raise TypeError(
+            f"'clinical_events' table has no column matching type of {first_code}"
+        )
+
+    if after is not None:
+        events = events.take(events.date.is_after(after))
+    if before is not None:
+        events = events.take(events.date.is_before(before))
+    if on_or_after is not None:
+        events = events.take(events.date.is_on_or_after(on_or_after))
+    if on_or_before is not None:
+        events = events.take(events.date.is_on_or_before(on_or_before))
+    if between is not None:
+        events = events.take(events.date.is_between(*between))
+    if on_or_between is not None:
+        events = events.take(events.date.is_on_or_between(*on_or_between))
+
+    return events.sort_by(events.date)
