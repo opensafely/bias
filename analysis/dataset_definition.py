@@ -149,44 +149,33 @@ dataset.first_positive_test_date = (
 #                      "float": {"distribution": "normal", "mean": 35, "stddev": 10},
 #                  },
 #              ),
-#
-#
-#          # SMOKING
-#          smoking_status=patients.categorised_as(
-#              {
-#                  "S": "most_recent_smoking_code = 'S'",
-#                  "E": """
-#                          most_recent_smoking_code = 'E' OR (
-#                          most_recent_smoking_code = 'N' AND ever_smoked
-#                          )
-#                      """,
-#                  "N": "most_recent_smoking_code = 'N' AND NOT ever_smoked",
-#                  "M": "DEFAULT",
-#              },
-#              return_expectations={
-#                  "incidence": 0.9,
-#                 "category": {"ratios": {"S": 0.6, "E": 0.1, "N": 0.2, "M": 0.1}}
-#              },
-#              most_recent_smoking_code=patients.with_these_clinical_events(
-#                  clear_smoking_codes,
-#                  find_last_match_in_period=True,
-#                  on_or_before="index_date",
-#                  returning="category",
-#              ),
-#              ever_smoked=patients.with_these_clinical_events(
-#                  filter_codes_by_category(clear_smoking_codes, include=["S", "E"]),
-#                  on_or_before="index_date",
-#              ),
-#          ),
-#          smoking_status_date=patients.with_these_clinical_events(
-#              clear_smoking_codes,
-#              on_or_before="index_date",
-#              returning="date",
-#              find_last_match_in_period=True,
-#              date_format="YYYY-MM-DD",
-#              return_expectations={"date": {"latest": "index_date"}},
-#          ),
-#
+
+
+# SMOKING
+most_recent_smoking_record = clinical_events_with_codes(
+    clear_smoking_codes, on_or_before=index_date
+).last_for_patient()
+most_recent_smoking_code = most_recent_smoking_record.ctv3_code.to_category(
+    clear_smoking_codes.Category
+)
+
+ever_smoked_codes = [
+    code
+    for (code, category) in clear_smoking_codes.Category.items()
+    if category in ("S", "E")
+]
+has_ever_smoked = clinical_events_with_codes(
+    ever_smoked_codes,
+    on_or_before=index_date,
+).exists_for_patient()
+
+dataset.smoking_status = case(
+    when(most_recent_smoking_code == "S").then("S"),
+    when(has_ever_smoked).then("E"),
+    when(most_recent_smoking_code == "N").then("N"),
+    default="M",
+)
+dataset.smoking_status_date = most_recent_smoking_record.date
 
 
 # COMORBIDITIES
