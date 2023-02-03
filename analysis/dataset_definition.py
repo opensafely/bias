@@ -9,24 +9,6 @@ from variables_lib import (
 
 dataset = Dataset()
 
-#  # STUDY DEFINITION FOR BASELINE CHARACTERISTICS
-#
-#  # Import necessary functions
-#
-#  from cohortextractor import (
-#      StudyDefinition,
-#      patients,
-#      codelist,
-#      filter_codes_by_category,
-#      codelist_from_csv
-#  )
-#
-#  # Import all codelists
-#  from codelists import *
-#
-#
-#  # Specify study definition
-#  study = StudyDefinition(
 
 index_date = "2022-09-01"
 # Date household identification was run
