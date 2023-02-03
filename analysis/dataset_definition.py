@@ -110,36 +110,23 @@ dataset.urban = address_2020.rural_urban_classification
 dataset.region = practice_reg.practice_nuts1_region_name
 
 
-#      # PRIMIS overall flag for shielded group
-#
-#      shielded=patients.satisfying(
-#              """ severely_clinically_vulnerable
-#              AND NOT less_vulnerable""",
-#          return_expectations={
-#              "incidence": 0.01,
-#                  },
-#
-#              ### SHIELDED GROUP - first flag all patients with "high risk" codes
-#          severely_clinically_vulnerable=patients.with_these_clinical_events(
-#              high_risk_codes, # note no date limits set
-#              find_last_match_in_period = True,
-#              return_expectations={"incidence": 0.02,},
-#          ),
-#
-#          # find date at which the high risk code was added
-#          date_severely_clinically_vulnerable=patients.date_of(
-#              "severely_clinically_vulnerable",
-#              date_format="YYYY-MM-DD",
-#          ),
-#
-#          ### NOT SHIELDED GROUP (medium and low risk) - only flag if later than 'shielded'
-#          less_vulnerable=patients.with_these_clinical_events(
-#              not_high_risk_codes,
-#              on_or_after="date_severely_clinically_vulnerable",
-#              return_expectations={"incidence": 0.01,},
-#          ),
-#      ),
-#
+# PRIMIS overall flag for shielded group
+# ## SHIELDED GROUP - first flag all patients with "high risk" codes
+severely_clinically_vulnerable_date = (
+    clinical_events_with_codes(high_risk_codes).last_for_patient().date
+)
+# ## NOT SHIELDED GROUP (medium and low risk) - only flag if later than 'shielded'
+less_vulnerable_date = (
+    clinical_events_with_codes(
+        not_high_risk_codes, on_or_after=severely_clinically_vulnerable_date
+    )
+    .first_for_patient()
+    .date
+)
+dataset.shielded = (
+    severely_clinically_vulnerable_date.is_not_null() & less_vulnerable_date.is_null()
+)
+
 #      ### COVID TESTING OPENSAFELY
 #      first_positive_test_date=patients.with_test_result_in_sgss(
 #              pathogen="SARS-CoV-2",
