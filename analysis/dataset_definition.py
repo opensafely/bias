@@ -127,20 +127,16 @@ dataset.shielded = (
     severely_clinically_vulnerable_date.is_not_null() & less_vulnerable_date.is_null()
 )
 
-#      ### COVID TESTING OPENSAFELY
-#      first_positive_test_date=patients.with_test_result_in_sgss(
-#              pathogen="SARS-CoV-2",
-#              test_result="positive",
-#              on_or_before="index_date",
-#              find_first_match_in_period=True,
-#              returning="date",
-#              date_format="YYYY-MM-DD",
-#              return_expectations={
-#                  "date": {"earliest": "2020-03-01"},
-#                  "rate": "exponential_increase",
-#              },
-#          ),
-#
+# ## COVID TESTING OPENSAFELY
+tests = t.sgss_covid_all_tests
+dataset.first_positive_test_date = (
+    tests.take(tests.is_positive)
+    .take(tests.specimen_taken_date <= index_date)
+    .sort_by(tests.specimen_taken_date)
+    .first_for_patient()
+    .specimen_taken_date
+)
+
 #      # LIFESTYLE VARIABLES
 #          # BMI
 #          bmi=patients.most_recent_bmi(
