@@ -210,33 +210,30 @@ dataset.hypertension = (
     .date
 )
 
-#          # HIGH BLOOD PRESSURE
-#          # https://github.com/ebmdatalab/tpp-sql-notebook/issues/35
-#          bp_sys=patients.mean_recorded_value(
-#              systolic_blood_pressure_codes,
-#              on_most_recent_day_of_measurement=True,
-#              on_or_before="index_date",
-#              include_measurement_date=True,
-#              include_month=True,
-#              return_expectations={
-#                  "float": {"distribution": "normal", "mean": 80, "stddev": 10},
-#                  "date": {"latest": "index_date"},
-#                  "incidence": 0.95,
-#              },
-#          ),
-#          bp_dias=patients.mean_recorded_value(
-#              diastolic_blood_pressure_codes,
-#              on_most_recent_day_of_measurement=True,
-#              on_or_before="2020-02-01",
-#              include_measurement_date=True,
-#              include_month=True,
-#              return_expectations={
-#                  "float": {"distribution": "normal", "mean": 120, "stddev": 10},
-#                  "date": {"latest": "2020-02-15"},
-#                  "incidence": 0.95,
-#              },
-#          ),
-#
+# HIGH BLOOD PRESSURE
+# Most recent date with a blood pressure record
+bp_date = (
+    ce.take(ce.ctv3_code.is_in(systolic_blood_pressure_codes))
+    .take(ce.date.is_on_or_before(index_date))
+    .sort_by(ce.date)
+    .last_for_patient()
+    .date
+)
+# Average systolic blood pressure on that day
+dataset.bp_sys = (
+    ce.take(ce.ctv3_code.is_in(systolic_blood_pressure_codes))
+    .take(ce.date == bp_date)
+    .numeric_value.mean_for_patient()
+)
+# Average diastolic blood pressure on that day
+dataset.bp_dias = (
+    ce.take(ce.ctv3_code.is_in(diastolic_blood_pressure_codes))
+    .take(ce.date == bp_date)
+    .numeric_value.mean_for_patient()
+)
+# Assign the blood pressure date to the columns the existing analysis code is expecting
+dataset.bp_sys_date_measured = bp_date
+dataset.bp_dias_date_measured = bp_date
 
 # DEMENTIA
 dataset.dementia = (
