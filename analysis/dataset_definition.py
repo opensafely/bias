@@ -1,13 +1,13 @@
 from codelists_ehrql import *
 from databuilder.ehrql import Dataset, case, days, when, years
-from databuilder.tables.beta import tpp as t
+from databuilder.tables.beta import tpp
 from variables_lib import (
     addresses_active_for_patient_at,
     practice_registrations_active_for_patient_at,
 )
 
 # Short alias for commonly used table
-ce = t.clinical_events
+ce = tpp.clinical_events
 
 dataset = Dataset()
 
@@ -19,12 +19,12 @@ household_ident_date = "2020-02-01"
 # define the study variables
 
 # in CIS or not
-dataset.in_cis = t.ons_cis.take(
-    t.ons_cis.visit_date.is_between(index_date - years(3), index_date)
+dataset.in_cis = tpp.ons_cis.take(
+    tpp.ons_cis.visit_date.is_between(index_date - years(3), index_date)
 ).exists_for_patient()
 
 # vaccination
-vax = t.vaccinations
+vax = tpp.vaccinations
 dataset.covid_vax = (
     vax.take(vax.target_disease == "SARS-2 CORONAVIRUS")
     .take(vax.date <= index_date)
@@ -37,9 +37,9 @@ dataset.covid_vax = (
 # DEMOGRAPHICS - sex, age, ethnicity
 
 # Note possible values are now: male, female, intersex, unknown
-dataset.sex = t.patients.sex
+dataset.sex = tpp.patients.sex
 
-age = (index_date - t.patients.date_of_birth).years
+age = (index_date - tpp.patients.date_of_birth).years
 dataset.age = age
 dataset.ageband_broad = case(
     when((age >= 18) & (age < 40)).then("18-39"),
@@ -77,7 +77,8 @@ dataset.ethnicity = ethnicity_combined.map_values(
 
 # REGISTRATION DETAILS
 
-dataset.died = t.ons_deaths.take(t.ons_deaths.date <= index_date).exists_for_patient()
+deaths = tpp.ons_deaths
+dataset.died = deaths.take(deaths.date <= index_date).exists_for_patient()
 
 practice_reg = practice_registrations_active_for_patient_at(index_date)
 practice_reg_2020 = practice_registrations_active_for_patient_at(household_ident_date)
@@ -93,7 +94,7 @@ dataset.is_registered_with_tpp_feb2020 = practice_reg_2020.exists_for_patient()
 
 # HOUSEHOLD INFORMATION
 
-household = t.household_memberships_2020
+household = tpp.household_memberships_2020
 dataset.household_id = household.household_pseudo_id
 dataset.household_size = household.household_size
 
@@ -134,7 +135,7 @@ dataset.shielded = (
 )
 
 # ## COVID TESTING OPENSAFELY
-tests = t.sgss_covid_all_tests
+tests = tpp.sgss_covid_all_tests
 dataset.first_positive_test_date = (
     tests.take(tests.is_positive)
     .take(tests.specimen_taken_date <= index_date)
@@ -297,7 +298,7 @@ copd_code_ever = ce.take(
     ce.ctv3_code.is_in(chronic_respiratory_disease_codes)
 ).exists_for_patient()
 
-meds = t.medications
+meds = tpp.medications
 prednisolone_last_year = (
     meds.take(meds.dmd_code.is_in(pred_codes))
     .take(meds.date.is_on_or_between(index_date - days(365), index_date))
