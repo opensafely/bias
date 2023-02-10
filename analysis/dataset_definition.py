@@ -1,4 +1,5 @@
 from codelists_ehrql import *
+from databuilder.codes import SNOMEDCTCode
 from databuilder.ehrql import Dataset, case, days, when, years
 from databuilder.tables.beta import tpp
 from variables_lib import (
@@ -144,19 +145,26 @@ dataset.first_positive_test_date = (
     .specimen_taken_date
 )
 
-#      # LIFESTYLE VARIABLES
-#          # BMI
-#          bmi=patients.most_recent_bmi(
-#                  on_or_before="2010-03-01",
-#                  minimum_age_at_measurement=16,
-#                  include_measurement_date=True,
-#                  include_month=True,
-#                  return_expectations={
-#                      "incidence": 0.6,
-#                      "float": {"distribution": "normal", "mean": 35, "stddev": 10},
-#                  },
-#              ),
+# LIFESTYLE VARIABLES
 
+# BMI
+# Definition from:
+# https://github.com/opensafely-core/databuilder/issues/1011#issuecomment-1425711630
+ce = tpp.clinical_events
+bmi_record = (
+    ce.take(
+        ce.snomedct_code.is_in(
+            [SNOMEDCTCode("60621009"), SNOMEDCTCode("846931000000101")]
+        )
+    )
+    .take((ce.numeric_value > 4.0) & (ce.numeric_value < 200.0))
+    .take(ce.date >= tpp.patients.date_of_birth + years(16))
+    .take(ce.date.is_on_or_before("2010-03-01"))
+    .sort_by(ce.date)
+    .last_for_patient()
+)
+dataset.bmi = bmi_record.numeric_value
+dataset.bmi_date_measured = bmi_record.date
 
 # SMOKING
 most_recent_smoking_record = (
