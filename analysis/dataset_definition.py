@@ -7,6 +7,15 @@ from variables_lib import (
     practice_registrations_active_for_patient_at,
 )
 
+
+# Map booleans to the integers 0 and 1 (otherwise they will appear in the CSV as `T` and
+# `F`). This is a temporary measure which makes the output of the dataset definition
+# match that of the old study definition so we can check it runs against the original
+# analysis scripts.
+def bool_to_int(bool_series):
+    return bool_series.map_values({False: 0, True: 1})
+
+
 # Short alias for commonly used table
 ce = tpp.clinical_events
 
@@ -20,9 +29,11 @@ household_ident_date = "2020-02-01"
 # define the study variables
 
 # in CIS or not
-dataset.in_cis = tpp.ons_cis.take(
-    tpp.ons_cis.visit_date.is_between(index_date - years(3), index_date)
-).exists_for_patient()
+dataset.in_cis = bool_to_int(
+    tpp.ons_cis.take(
+        tpp.ons_cis.visit_date.is_between(index_date - years(3), index_date)
+    ).exists_for_patient()
+)
 
 # vaccination
 vax = tpp.vaccinations
@@ -38,7 +49,16 @@ dataset.covid_vax = (
 # DEMOGRAPHICS - sex, age, ethnicity
 
 # Note possible values are now: male, female, intersex, unknown
-dataset.sex = tpp.patients.sex
+# We temporarily map these back to their old values so we can use the existing analysis
+# scripts unmodified.
+dataset.sex = tpp.patients.sex.map_values(
+    {
+        "male": "M",
+        "female": "F",
+        "intersex": "I",
+        "unknown": "U",
+    }
+)
 
 age = (index_date - tpp.patients.date_of_birth).years
 dataset.age = age
@@ -79,18 +99,22 @@ dataset.ethnicity = ethnicity_combined.map_values(
 # REGISTRATION DETAILS
 
 deaths = tpp.ons_deaths
-dataset.died = deaths.take(deaths.date <= index_date).exists_for_patient()
+died = deaths.take(deaths.date <= index_date).exists_for_patient()
+dataset.died = bool_to_int(died)
 
 practice_reg = practice_registrations_active_for_patient_at(index_date)
 practice_reg_2020 = practice_registrations_active_for_patient_at(household_ident_date)
 
-dataset.is_registered_with_tpp = practice_reg.exists_for_patient()
+is_registered_with_tpp = practice_reg.exists_for_patient()
+dataset.is_registered_with_tpp = bool_to_int(is_registered_with_tpp)
 
 # registered with the practice for 90 days prior to index date
-dataset.has_follow_up = practice_reg.start_date <= index_date - days(90)
+has_follow_up = practice_reg.start_date <= index_date - days(90)
+dataset.has_follow_up = bool_to_int(has_follow_up)
 
 # registered with TPP on date of household identification (1st Feb 2020)
-dataset.is_registered_with_tpp_feb2020 = practice_reg_2020.exists_for_patient()
+is_registered_with_tpp_feb2020 = practice_reg_2020.exists_for_patient()
+dataset.is_registered_with_tpp_feb2020 = bool_to_int(is_registered_with_tpp_feb2020)
 
 
 # HOUSEHOLD INFORMATION
@@ -131,7 +155,7 @@ less_vulnerable_date = (
     .first_for_patient()
     .date
 )
-dataset.shielded = (
+dataset.shielded = bool_to_int(
     severely_clinically_vulnerable_date.is_not_null() & less_vulnerable_date.is_null()
 )
 
@@ -508,8 +532,8 @@ dataset.dialysis = (
 dataset.set_population(
     (dataset.age >= 18)
     & (dataset.age < 120)
-    & dataset.is_registered_with_tpp
-    & ~dataset.died
-    & dataset.has_follow_up
-    & dataset.is_registered_with_tpp_feb2020
+    & is_registered_with_tpp
+    & ~died
+    & has_follow_up
+    & is_registered_with_tpp_feb2020
 )
