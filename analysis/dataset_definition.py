@@ -78,7 +78,7 @@ ethnicity_primary_care = (
     ce.take(ce.snomedct_code.is_in(ethnicity_codes))
     .sort_by(ce.date)
     .last_for_patient()
-    .snomedct_code.to_category(ethnicity_codes.Grouping_6)
+    .snomedct_code.to_category(ethnicity_codes)
 )
 # TODO: SUS Ethnicity is not yet available in Data Builder, see:
 # https://github.com/opensafely-core/databuilder/issues/937
@@ -198,12 +198,12 @@ most_recent_smoking_record = (
     .last_for_patient()
 )
 most_recent_smoking_code = most_recent_smoking_record.ctv3_code.to_category(
-    clear_smoking_codes.Category
+    clear_smoking_codes
 )
 
 ever_smoked_codes = [
     code
-    for (code, category) in clear_smoking_codes.Category.items()
+    for (code, category) in clear_smoking_codes.items()
     if category in ("S", "E")
 ]
 has_ever_smoked = (
@@ -342,8 +342,7 @@ dataset.asthma = case(
 )
 
 # CANCER - 3 TYPES
-# TODO: Union needs to be natively supported by the Codelist class
-combined_cancer_codes = lung_cancer_codes.codes | other_cancer_codes.codes
+combined_cancer_codes = lung_cancer_codes + other_cancer_codes
 dataset.cancer = (
     ce.take(ce.ctv3_code.is_in(combined_cancer_codes))
     .take(ce.date.is_on_or_before(index_date))
@@ -363,7 +362,7 @@ dataset.haem_cancer = (
 
 # ### PERMANENT
 combined_immune_codes = (
-    hiv_codes.codes | permanent_immune_codes.codes | sickle_cell_codes.codes
+    hiv_codes + permanent_immune_codes + sickle_cell_codes
 )
 dataset.permanent_immunodeficiency = (
     ce.take(ce.ctv3_code.is_in(combined_immune_codes))
