@@ -7,7 +7,7 @@ def practice_registrations_active_for_patient_at(date):
     Return each patient's "active" practice registration as of the supplied date
     """
     regs = tpp.practice_registrations
-    overlapping = regs.take(
+    overlapping = regs.where(
         regs.start_date.is_on_or_before(date)
         & (regs.end_date.is_after(date) | regs.end_date.is_null())
     )
@@ -26,7 +26,7 @@ def addresses_active_for_patient_at(date):
     Return each patient's "active" address as of the supplied date
     """
     addr = tpp.addresses
-    overlapping = addr.take(
+    overlapping = addr.where(
         addr.start_date.is_on_or_before(date)
         & (addr.end_date.is_after(date) | addr.end_date.is_null())
     )
