@@ -30,7 +30,7 @@ household_ident_date = "2020-02-01"
 
 # in CIS or not
 dataset.in_cis = bool_to_int(
-    tpp.ons_cis.take(
+    tpp.ons_cis.where(
         tpp.ons_cis.visit_date.is_between(index_date - years(3), index_date)
     ).exists_for_patient()
 )
@@ -38,8 +38,8 @@ dataset.in_cis = bool_to_int(
 # vaccination
 vax = tpp.vaccinations
 dataset.covid_vax = (
-    vax.take(vax.target_disease == "SARS-2 CORONAVIRUS")
-    .take(vax.date <= index_date)
+    vax.where(vax.target_disease == "SARS-2 CORONAVIRUS")
+    .where(vax.date <= index_date)
     .sort_by(vax.date)
     .first_for_patient()
     .date
@@ -75,7 +75,7 @@ dataset.ageband_broad = case(
 
 # Ethnicity
 ethnicity_primary_care = (
-    ce.take(ce.snomedct_code.is_in(ethnicity_codes))
+    ce.where(ce.snomedct_code.is_in(ethnicity_codes))
     .sort_by(ce.date)
     .last_for_patient()
     .snomedct_code.to_category(ethnicity_codes)
@@ -99,7 +99,7 @@ dataset.ethnicity = ethnicity_combined.map_values(
 # REGISTRATION DETAILS
 
 deaths = tpp.ons_deaths
-died = deaths.take(deaths.date <= index_date).exists_for_patient()
+died = deaths.where(deaths.date <= index_date).exists_for_patient()
 dataset.died = bool_to_int(died)
 
 practice_reg = practice_registrations_active_for_patient_at(index_date)
@@ -142,15 +142,15 @@ dataset.region = practice_reg.practice_nuts1_region_name
 # PRIMIS overall flag for shielded group
 # ## SHIELDED GROUP - first flag all patients with "high risk" codes
 severely_clinically_vulnerable_date = (
-    ce.take(ce.snomedct_code.is_in(high_risk_codes))
+    ce.where(ce.snomedct_code.is_in(high_risk_codes))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # ## NOT SHIELDED GROUP (medium and low risk) - only flag if later than 'shielded'
 less_vulnerable_date = (
-    ce.take(ce.snomedct_code.is_in(not_high_risk_codes))
-    .take(ce.date.is_on_or_after(severely_clinically_vulnerable_date))
+    ce.where(ce.snomedct_code.is_in(not_high_risk_codes))
+    .where(ce.date.is_on_or_after(severely_clinically_vulnerable_date))
     .sort_by(ce.date)
     .first_for_patient()
     .date
@@ -162,8 +162,8 @@ dataset.shielded = bool_to_int(
 # ## COVID TESTING OPENSAFELY
 tests = tpp.sgss_covid_all_tests
 dataset.first_positive_test_date = (
-    tests.take(tests.is_positive)
-    .take(tests.specimen_taken_date <= index_date)
+    tests.where(tests.is_positive)
+    .where(tests.specimen_taken_date <= index_date)
     .sort_by(tests.specimen_taken_date)
     .first_for_patient()
     .specimen_taken_date
@@ -176,14 +176,14 @@ dataset.first_positive_test_date = (
 # https://github.com/opensafely-core/databuilder/issues/1011#issuecomment-1425711630
 ce = tpp.clinical_events
 bmi_record = (
-    ce.take(
+    ce.where(
         ce.snomedct_code.is_in(
             [SNOMEDCTCode("60621009"), SNOMEDCTCode("846931000000101")]
         )
     )
-    .take((ce.numeric_value > 4.0) & (ce.numeric_value < 200.0))
-    .take(ce.date >= tpp.patients.date_of_birth + years(16))
-    .take(ce.date.is_on_or_before("2010-03-01"))
+    .where((ce.numeric_value > 4.0) & (ce.numeric_value < 200.0))
+    .where(ce.date >= tpp.patients.date_of_birth + years(16))
+    .where(ce.date.is_on_or_before("2010-03-01"))
     .sort_by(ce.date)
     .last_for_patient()
 )
@@ -192,8 +192,8 @@ dataset.bmi_date_measured = bmi_record.date
 
 # SMOKING
 most_recent_smoking_record = (
-    ce.take(ce.ctv3_code.is_in(clear_smoking_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(clear_smoking_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
 )
@@ -207,8 +207,8 @@ ever_smoked_codes = [
     if category in ("S", "E")
 ]
 has_ever_smoked = (
-    ce.take(ce.ctv3_code.is_in(ever_smoked_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(ever_smoked_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .exists_for_patient()
 )
@@ -227,8 +227,8 @@ dataset.smoking_status_date = most_recent_smoking_record.date
 
 # HYPERTENSION - CLINICAL CODES ONLY
 dataset.hypertension = (
-    ce.take(ce.ctv3_code.is_in(hypertension_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(hypertension_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .first_for_patient()
     .date
@@ -237,22 +237,22 @@ dataset.hypertension = (
 # HIGH BLOOD PRESSURE
 # Most recent date with a blood pressure record
 bp_date = (
-    ce.take(ce.ctv3_code.is_in(systolic_blood_pressure_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(systolic_blood_pressure_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # Average systolic blood pressure on that day
 dataset.bp_sys = (
-    ce.take(ce.ctv3_code.is_in(systolic_blood_pressure_codes))
-    .take(ce.date == bp_date)
+    ce.where(ce.ctv3_code.is_in(systolic_blood_pressure_codes))
+    .where(ce.date == bp_date)
     .numeric_value.mean_for_patient()
 )
 # Average diastolic blood pressure on that day
 dataset.bp_dias = (
-    ce.take(ce.ctv3_code.is_in(diastolic_blood_pressure_codes))
-    .take(ce.date == bp_date)
+    ce.where(ce.ctv3_code.is_in(diastolic_blood_pressure_codes))
+    .where(ce.date == bp_date)
     .numeric_value.mean_for_patient()
 )
 # Assign the blood pressure date to the columns the existing analysis code is expecting
@@ -261,8 +261,8 @@ dataset.bp_dias_date_measured = bp_date
 
 # DEMENTIA
 dataset.dementia = (
-    ce.take(ce.ctv3_code.is_in(dementia_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(dementia_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .first_for_patient()
     .date
@@ -270,16 +270,16 @@ dataset.dementia = (
 
 # DIABETES
 dataset.diabetes = (
-    ce.take(ce.ctv3_code.is_in(diabetes_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(diabetes_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .first_for_patient()
     .date
 )
 
 hba1c_measurement = (
-    ce.take(ce.ctv3_code.is_in(hba1c_new_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(hba1c_new_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
 )
@@ -287,8 +287,8 @@ dataset.hba1c_mmol_per_mol = hba1c_measurement.numeric_value
 dataset.hba1c_mmol_per_mol_date = hba1c_measurement.date
 
 hba1c_percentage = (
-    ce.take(ce.ctv3_code.is_in(hba1c_old_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(hba1c_old_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
 )
@@ -297,8 +297,8 @@ dataset.hba1c_percentage_date = hba1c_percentage.date
 
 # COPD
 dataset.copd = (
-    ce.take(ce.ctv3_code.is_in(copd_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(copd_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .first_for_patient()
     .date
@@ -306,8 +306,8 @@ dataset.copd = (
 
 # OTHER RESPIRATORY DISEASES
 dataset.other_respiratory = (
-    ce.take(ce.ctv3_code.is_in(other_respiratory_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(other_respiratory_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .first_for_patient()
     .date
@@ -315,22 +315,22 @@ dataset.other_respiratory = (
 
 # asthma
 latest_asthma_code_date = (
-    ce.take(ce.ctv3_code.is_in(asthma_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(asthma_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 recent_asthma_code = latest_asthma_code_date >= index_date - days(3 * 365)
 asthma_code_ever = latest_asthma_code_date.is_not_null()
-copd_code_ever = ce.take(
+copd_code_ever = ce.where(
     ce.ctv3_code.is_in(chronic_respiratory_disease_codes)
 ).exists_for_patient()
 
 meds = tpp.medications
 prednisolone_last_year = (
-    meds.take(meds.dmd_code.is_in(pred_codes))
-    .take(meds.date.is_on_or_between(index_date - days(365), index_date))
+    meds.where(meds.dmd_code.is_in(pred_codes))
+    .where(meds.date.is_on_or_between(index_date - days(365), index_date))
     .count_for_patient()
 )
 
@@ -344,15 +344,15 @@ dataset.asthma = case(
 # CANCER - 3 TYPES
 combined_cancer_codes = lung_cancer_codes + other_cancer_codes
 dataset.cancer = (
-    ce.take(ce.ctv3_code.is_in(combined_cancer_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(combined_cancer_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .first_for_patient()
     .date
 )
 dataset.haem_cancer = (
-    ce.take(ce.ctv3_code.is_in(haem_cancer_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(haem_cancer_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .first_for_patient()
     .date
@@ -365,30 +365,30 @@ combined_immune_codes = (
     hiv_codes + permanent_immune_codes + sickle_cell_codes
 )
 dataset.permanent_immunodeficiency = (
-    ce.take(ce.ctv3_code.is_in(combined_immune_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(combined_immune_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 
 dataset.transplant = (
-    ce.take(ce.ctv3_code.is_in(organ_transplant_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(organ_transplant_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 dataset.asplenia = (
-    ce.take(ce.ctv3_code.is_in(spleen_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(spleen_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 dataset.aplastic_anaemia = (
-    ce.take(ce.ctv3_code.is_in(aplastic_codes))
-    .take(ce.date.is_on_or_between(index_date - days(365), index_date))
+    ce.where(ce.ctv3_code.is_in(aplastic_codes))
+    .where(ce.date.is_on_or_between(index_date - days(365), index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
@@ -396,8 +396,8 @@ dataset.aplastic_anaemia = (
 
 # ### TEMPORARY
 dataset.temporary_immunodeficiency = (
-    ce.take(ce.ctv3_code.is_in(temp_immune_codes))
-    .take(ce.date.is_on_or_between("2019-03-01", index_date))
+    ce.where(ce.ctv3_code.is_in(temp_immune_codes))
+    .where(ce.date.is_on_or_between("2019-03-01", index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
@@ -407,112 +407,112 @@ dataset.temporary_immunodeficiency = (
 
 # HEART FAILURE
 dataset.heart_failure = (
-    ce.take(ce.ctv3_code.is_in(heart_failure_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(heart_failure_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .first_for_patient()
     .date
 )
 # stroke
 dataset.stroke = (
-    ce.take(ce.ctv3_code.is_in(stroke_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(stroke_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # Transient ischaemic attack
 dataset.tia = (
-    ce.take(ce.ctv3_code.is_in(tia_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(tia_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # Myocardial infarction
 dataset.myocardial_infarct = (
-    ce.take(ce.ctv3_code.is_in(mi_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(mi_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # Chronic heart disease
 dataset.heart_disease = (
-    ce.take(ce.ctv3_code.is_in(chd_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(chd_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # Peripheral artery disease
 dataset.pad = (
-    ce.take(ce.ctv3_code.is_in(pad_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(pad_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # Venous thromboembolism
 dataset.vte = (
-    ce.take(ce.ctv3_code.is_in(vte_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(vte_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # Atrial fibrillation
 dataset.af = (
-    ce.take(ce.ctv3_code.is_in(af_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(af_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # Lupus
 dataset.systemic_lupus_erythematosus = (
-    ce.take(ce.ctv3_code.is_in(sle_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(sle_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # rheumatoid arthritis
 dataset.rheumatoid_arthritis = (
-    ce.take(ce.ctv3_code.is_in(rheumatoid_arthritis_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(rheumatoid_arthritis_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # psoriasis
 dataset.psoriasis = (
-    ce.take(ce.ctv3_code.is_in(psoriasis_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(psoriasis_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # liver disease
 dataset.chronic_liver_disease = (
-    ce.take(ce.ctv3_code.is_in(liver_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(liver_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # other neurological disease
 dataset.other_neuro = (
-    ce.take(ce.ctv3_code.is_in(other_neuro_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(other_neuro_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 # CKD
 creatinine = (
-    ce.take(ce.snomedct_code.is_in(creatinine_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.snomedct_code.is_in(creatinine_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
 )
@@ -520,15 +520,15 @@ dataset.creatinine = creatinine.numeric_value
 dataset.creatinine_date = creatinine.date
 # kidney dialysis
 dataset.dialysis = (
-    ce.take(ce.ctv3_code.is_in(dialysis_codes))
-    .take(ce.date.is_on_or_before(index_date))
+    ce.where(ce.ctv3_code.is_in(dialysis_codes))
+    .where(ce.date.is_on_or_before(index_date))
     .sort_by(ce.date)
     .last_for_patient()
     .date
 )
 
 
-dataset.set_population(
+dataset.define_population(
     (dataset.age >= 18)
     & (dataset.age < 120)
     & is_registered_with_tpp
